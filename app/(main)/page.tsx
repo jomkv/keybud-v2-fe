@@ -1,7 +1,23 @@
+import PostCard from "@/components/cards/post-card";
+
 export default function Home() {
   return (
-    <div className="font-sans flex items-center justify-items-center">
-      <p className="text-4xl font-bold">Hello World</p>
+    <div className="h-full flex flex-col divide-y divide-neutral-700">
+      <div className="w-full">
+        <PostCard />
+      </div>
+      <div className="w-full">
+        <PostCard />
+      </div>
+      <div className="w-full">
+        <PostCard />
+      </div>
+      <div className="w-full">
+        <PostCard />
+      </div>
+      <div className="w-full">
+        <PostCard />
+      </div>
     </div>
   );
 }
