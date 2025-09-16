@@ -37,26 +37,31 @@ const LEFT_NAV_ITEMS: {
 
 export default function LeftSidebar() {
   return (
-    <div className="flex flex-col gap-5 items-end h-full w-full">
-      <Link
-        className="flex items-center justify-start gap-4 h-10 w-auto 2xl:w-full"
-        href={"/"}
-      >
-        <img src="/assets/Logo_Acronym.svg" className="w-[40px]" />
-      </Link>
-      {LEFT_NAV_ITEMS.map((navItem, key) => (
+    <div className="flex flex-col justify-between h-full w-full">
+      <div className="flex flex-col gap-3 items-start">
         <Link
-          className="flex items-center justify-start gap-5 h-10 w-auto 2xl:w-full"
-          href={navItem.url}
-          key={key}
+          className="flex items-center p-3 justify-start gap-4 h-10 hover:bg-neutral-500 rounded-full"
+          href={"/"}
         >
-          <Icon height={40} icon={navItem.icon} />
-          <span className="hidden 2xl:block text-xl">{navItem.title}</span>
+          <img
+            src="/assets/Logo_Acronym.svg"
+            className="h-[2.25rem] w-[2.25rem]"
+          />
         </Link>
-      ))}
-      <Button className="rounded-full w-10 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl">
+        {LEFT_NAV_ITEMS.map((navItem, key) => (
+          <Link
+            className="flex items-center p-3 2xl:p-5 2xl:ps-3 justify-start gap-5 h-14 w-auto hover:bg-neutral-500 rounded-full"
+            href={navItem.url}
+            key={key}
+          >
+            <Icon className="text-3xl" icon={navItem.icon} />
+            <span className="hidden 2xl:block text-xl">{navItem.title}</span>
+          </Link>
+        ))}
+      </div>
+      <Button className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl justify-self-end mt-5">
         <p className="hidden 2xl:block">Post</p>
-        <Icon icon="ph:key-return" className="block 2xl:hidden text-5xl" />
+        <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
       </Button>
     </div>
   );
