@@ -29,9 +29,19 @@ const LEFT_NAV_ITEMS: {
     icon: "ph:magnifying-glass",
   },
   {
+    title: "Profile",
+    url: "#",
+    icon: "ph:user",
+  },
+  {
     title: "Settings",
     url: "#",
     icon: "ph:gear",
+  },
+  {
+    title: "Logout",
+    url: "#",
+    icon: "ph:arrow-line-right",
   },
 ];
 

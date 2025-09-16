@@ -5,16 +5,19 @@ import { Ellipsis, MessageSquare, Repeat2, Star } from "lucide-react";
 function PostCard() {
   return (
     <div className="flex p-4 gap-2">
-      <img src="/assets/user_icon.png" className="rounded-full w-12 h-12" />
+      <img
+        src="/assets/user_icon.png"
+        className="rounded-full w-12 h-12 mt-3"
+      />
       <div className="flex-1 flex flex-col">
         {/* Header (username, date, settings btn) */}
         <div className="flex justify-between">
-          <div className="flex gap-2  items-center">
+          <div className="flex gap-2 items-center">
             <p className="font-semibold text-lg">@woozy</p>
             <p className="font-light text-gray-400">·</p>
             <p className="font-light text-gray-400">Sep 14</p>
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button variant="ghost" size="sm" className="rounded-full">
             <Ellipsis />
           </Button>
         </div>
