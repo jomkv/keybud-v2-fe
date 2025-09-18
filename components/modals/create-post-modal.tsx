@@ -16,7 +16,10 @@ export default function CreatePostModal() {
         <DialogTitle>Create Post</DialogTitle>
       </DialogHeader>
       <CreatePostForm />
-      <DialogFooter className="sm:justify-start">
+      <DialogFooter>
+        <Button type="submit" form="create-post-form">
+          Submit
+        </Button>
         <DialogClose asChild>
           <Button type="button" variant="secondary">
             Cancel

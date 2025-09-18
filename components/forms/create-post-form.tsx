@@ -39,7 +39,11 @@ export default function CreatePostForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full space-y-6"
+        id="create-post-form"
+      >
         <FormField
           control={form.control}
           name="title"
