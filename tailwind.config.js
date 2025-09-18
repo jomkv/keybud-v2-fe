@@ -64,8 +64,26 @@ module.exports = {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			}
+  		},
+  		typography: {
+  			DEFAULT: {
+  				css: {
+  					'code::before': {
+  						content: ''
+  					},
+  					'code::after': {
+  						content: ''
+  					},
+  					code: {
+  						background: '#f3f3f3',
+  						wordWrap: 'break-word',
+  						padding: '.1rem .2rem',
+  						borderRadius: '.2rem'
+  					}
+  				}
+  			}
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 };

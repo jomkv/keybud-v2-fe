@@ -2,6 +2,8 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import CreatePostModal from "../modals/create-post-modal";
 
 const LEFT_NAV_ITEMS: {
   icon: string;
@@ -69,10 +71,15 @@ export default function LeftSidebar() {
           </Link>
         ))}
       </div>
-      <Button className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl justify-self-end mt-5">
-        <p className="hidden 2xl:block">Post</p>
-        <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
-      </Button>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl justify-self-end mt-5">
+            <p className="hidden 2xl:block">Post</p>
+            <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
+          </Button>
+        </DialogTrigger>
+        <CreatePostModal />
+      </Dialog>
     </div>
   );
 }
