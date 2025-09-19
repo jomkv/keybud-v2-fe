@@ -12,7 +12,7 @@ const LEFT_NAV_ITEMS: {
 }[] = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: "ph:house",
   },
   {

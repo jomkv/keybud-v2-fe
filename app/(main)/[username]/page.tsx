@@ -1,8 +1,11 @@
 import PostCard from "@/components/cards/post-card";
+import React from "react";
+import ProfileTab from "./components/tabs/profile-tab";
 
-export default function Home() {
+function Profile() {
   return (
     <>
+      <ProfileTab />
       <PostCard />
       <PostCard />
       <PostCard />
@@ -13,3 +16,5 @@ export default function Home() {
     </>
   );
 }
+
+export default Profile;
