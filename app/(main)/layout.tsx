@@ -1,5 +1,5 @@
-import LeftSidebar from "@/components/navigation/left-sidebar";
-import RightSidebar from "@/components/navigation/right-sidebar";
+import LeftSidebar from "@/app/(main)/components/sidebars/left-sidebar";
+import RightSidebar from "@/app/(main)/components/sidebars/right-sidebar";
 
 export default function MainLayout({
   children,

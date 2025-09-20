@@ -1,5 +1,5 @@
 import React from "react";
-import ProfileCard from "../cards/profile-card";
+import ProfileCard from "@/components/cards/profile-card";
 
 export default function RightSidebar() {
   return (

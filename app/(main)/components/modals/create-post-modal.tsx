@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import CreatePostForm from "@/components/forms/create-post-form";
+import CreatePostForm from "@/app/(main)/components/forms/create-post-form";
 
 export default function CreatePostModal() {
   return (

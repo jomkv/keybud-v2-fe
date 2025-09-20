@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import CreatePostModal from "../modals/create-post-modal";
+import CreatePostModal from "@/app/(main)/components/modals/create-post-modal";
 
 const LEFT_NAV_ITEMS: {
   icon: string;
