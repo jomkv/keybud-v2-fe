@@ -1,7 +1,16 @@
+import NotificationCard from "@/components/cards/notification-card";
 import React from "react";
 
 function Notifications() {
-  return <div>hello notifs</div>;
+  return (
+    <>
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+      <NotificationCard />
+    </>
+  );
 }
 
 export default Notifications;
