@@ -50,7 +50,7 @@ const LEFT_NAV_ITEMS: {
 export default function LeftSidebar() {
   return (
     <div className="flex flex-col justify-between h-full w-full">
-      <div className="flex flex-col gap-3 items-start">
+      <div className="flex flex-col gap-3 items-end 2xl:items-start">
         <Link
           className="flex items-center p-3 justify-start gap-4 h-10 hover:bg-neutral-500 rounded-full"
           href={"/"}
@@ -71,15 +71,17 @@ export default function LeftSidebar() {
           </Link>
         ))}
       </div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl justify-self-end mt-5">
-            <p className="hidden 2xl:block">Post</p>
-            <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
-          </Button>
-        </DialogTrigger>
-        <CreatePostModal />
-      </Dialog>
+      <div className="flex justify-end">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl mt-5">
+              <p className="hidden 2xl:block">Post</p>
+              <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
+            </Button>
+          </DialogTrigger>
+          <CreatePostModal />
+        </Dialog>
+      </div>
     </div>
   );
 }
