@@ -17,27 +17,27 @@ const LEFT_NAV_ITEMS: {
   },
   {
     title: "Messages",
-    url: "#",
+    url: "/messages",
     icon: "ph:envelope-simple",
   },
   {
     title: "Notifications",
-    url: "#",
+    url: "/notifications",
     icon: "ph:bell-simple",
   },
   {
     title: "Search",
-    url: "#",
+    url: "/search",
     icon: "ph:magnifying-glass",
   },
   {
     title: "Profile",
-    url: "#",
+    url: "/johndoe",
     icon: "ph:user",
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: "ph:gear",
   },
   {
