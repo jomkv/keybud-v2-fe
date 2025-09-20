@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { z } from "zod";
-import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
+import RichTextInput from "@/components/inputs/rich-text-input";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
+  attachments: z
+    .any()
+    .refine(
+      (files) => !files || (Array.isArray(files) && files.length <= 10),
+      "Maximum of 4 attachments."
+    ),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -28,6 +34,7 @@ export default function CreatePostForm() {
     defaultValues: {
       title: "",
       description: "",
+      attachments: [],
     },
   });
 
@@ -70,9 +77,9 @@ export default function CreatePostForm() {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="sr-only">Description</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
-                <MinimalTiptapEditor
+                <RichTextInput
                   {...field}
                   throttleDelay={0}
                   className={cn("h-full min-h-56 w-full min-w-0 rounded-xl", {
@@ -84,6 +91,27 @@ export default function CreatePostForm() {
                   placeholder="Type your description here..."
                   editable={true}
                   editorClassName="focus:outline-hidden px-5 py-4 h-full grow"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="attachments"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Attachments</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  multiple
+                  onChange={(e) => {
+                    field.onChange(Array.from(e.target.files ?? []));
+                  }}
+                  className="w-full"
                 />
               </FormControl>
               <FormMessage />

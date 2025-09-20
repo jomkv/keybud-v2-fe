@@ -8,6 +8,7 @@ import { SectionTwo } from "@/components/ui/minimal-tiptap/components/section/tw
 import { LinkBubbleMenu } from "@/components/ui/minimal-tiptap/components/bubble-menu/link-bubble-menu";
 import { useMinimalTiptapEditor } from "@/components/ui/minimal-tiptap/hooks/use-minimal-tiptap";
 import { MeasuredContainer } from "@/components/ui/minimal-tiptap/components/measured-container";
+import SectionFour from "@/components/ui/minimal-tiptap/components/section/four";
 
 export interface MinimalTiptapProps
   extends Omit<UseMinimalTiptapEditorProps, "onUpdate"> {
@@ -22,8 +23,12 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
     <div className="flex w-max items-center gap-px">
       <SectionTwo
         editor={editor}
-        activeActions={["bold", "italic", "underline", "strikethrough", "code"]}
+        activeActions={["bold", "italic", "underline", "strikethrough"]}
         mainActionCount={5}
+      />
+      <SectionFour
+        editor={editor}
+        activeActions={["orderedList", "bulletList"]}
       />
     </div>
   </div>
