@@ -7,5 +7,5 @@ export type Page =
   | "settings";
 
 export interface NavigationState {
-  currentPage: Page;
+  currentPage: Page | undefined;
 }

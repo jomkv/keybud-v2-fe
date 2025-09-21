@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import CreatePostModal from "@/app/(main)/components/modals/create-post-modal";
@@ -72,6 +72,13 @@ export default function LeftSidebar() {
 
     dispatch(setPage(value));
   };
+
+  useEffect(() => {
+    const stored = localStorage.getItem("currentPage");
+    if (stored) {
+      dispatch(setPage(stored as Page));
+    }
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col justify-between h-full w-full">

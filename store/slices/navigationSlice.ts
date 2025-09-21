@@ -11,6 +11,9 @@ const navigationSlice = createSlice({
   reducers: {
     setPage: (state, action: PayloadAction<Page>) => {
       state.currentPage = action.payload;
+      if (typeof window !== "undefined") {
+        localStorage.setItem("currentPage", action.payload);
+      }
     },
   },
 });
