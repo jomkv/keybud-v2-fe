@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setPage } from "@/store/slices/navigationSlice";
 import { RootState } from "@/store/store";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const LEFT_NAV_ITEMS: {
   icon: string;
@@ -88,6 +89,8 @@ export default function LeftSidebar() {
       page = "search";
     } else if (pathname === "/settings") {
       page = "settings";
+    } else if (pathname.startsWith("/post/")) {
+      page = "post";
     } else {
       page = "profile";
     }
@@ -109,9 +112,9 @@ export default function LeftSidebar() {
         </Link>
         {LEFT_NAV_ITEMS.map((navItem, key) => (
           <Link
-            className={`flex items-center p-3 2xl:p-5 2xl:ps-3 justify-start gap-5 h-14 w-auto hover:bg-neutral-500 rounded-full ${
+            className={`flex items-center p-3 2xl:p-5 2xl:ps-3 justify-start gap-5 h-14 w-auto hover:bg-neutral-500 rounded-full ${cn(
               currentPage === navItem.value ? "font-bold" : ""
-            }`}
+            )}`}
             href={navItem.url}
             key={key}
             onClick={() => handleNavClick(navItem.value)}

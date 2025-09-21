@@ -4,7 +4,8 @@ export type Page =
   | "notifications"
   | "search"
   | "profile"
-  | "settings";
+  | "settings"
+  | "post";
 
 export interface NavigationState {
   currentPage: Page;
