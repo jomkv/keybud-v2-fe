@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Repeat2, Star } from "lucide-react";
+import Link from "next/link";
 
 // Example attachments array (replace with your data)
 const attachments: string[] = [
@@ -92,7 +93,9 @@ function PostCard() {
         {/* Header (username, date, settings btn) */}
         <div className="flex justify-between">
           <div className="flex gap-2 items-center">
-            <p className="font-semibold text-lg">@woozy</p>
+            <Link href="/johndoe">
+              <p className="font-semibold text-lg hover:underline">@woozy</p>
+            </Link>
             <p className="font-light text-gray-400">·</p>
             <p className="font-light text-gray-400">Sep 14</p>
           </div>

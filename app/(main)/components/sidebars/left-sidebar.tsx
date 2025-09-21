@@ -10,6 +10,7 @@ import { Page } from "@/@types/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setPage } from "@/store/slices/navigationSlice";
 import { RootState } from "@/store/store";
+import { usePathname } from "next/navigation";
 
 const LEFT_NAV_ITEMS: {
   icon: string;
@@ -62,6 +63,7 @@ const LEFT_NAV_ITEMS: {
 ];
 
 export default function LeftSidebar() {
+  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { currentPage } = useAppSelector(
     (state: RootState) => state.navigation
@@ -74,11 +76,24 @@ export default function LeftSidebar() {
   };
 
   useEffect(() => {
-    const stored = localStorage.getItem("currentPage");
-    if (stored) {
-      dispatch(setPage(stored as Page));
+    let page: Page;
+
+    if (pathname === "/") {
+      page = "home";
+    } else if (pathname === "/messages") {
+      page = "messages";
+    } else if (pathname === "/notifications") {
+      page = "notifications";
+    } else if (pathname === "/search") {
+      page = "search";
+    } else if (pathname === "/settings") {
+      page = "settings";
+    } else {
+      page = "profile";
     }
-  }, [dispatch]);
+
+    dispatch(setPage(page));
+  }, []);
 
   return (
     <div className="flex flex-col justify-between h-full w-full">
