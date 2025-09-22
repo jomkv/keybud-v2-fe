@@ -11,7 +11,7 @@ const attachments: string[] = [
   //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
 ];
 
-function PostAttachments({ attachments }: { attachments: string[] }) {
+export function PostAttachments({ attachments }: { attachments: string[] }) {
   if (attachments.length === 1) {
     return (
       <div className="w-full aspect-square my-2 overflow-hidden rounded-lg bg-neutral-800 flex items-center justify-center">
@@ -24,7 +24,7 @@ function PostAttachments({ attachments }: { attachments: string[] }) {
     );
   } else if (attachments.length === 2) {
     return (
-      <div className="w-full aspect-square my-2 grid grid-cols-2 gap-1 overflow-hidden rounded-lg">
+      <div className="w-full aspect-3/2 my-2 grid grid-cols-2 gap-1 overflow-hidden rounded-lg">
         {attachments.map((src, i) => (
           <img
             key={i}
