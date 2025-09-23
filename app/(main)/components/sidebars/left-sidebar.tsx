@@ -99,7 +99,7 @@ export default function LeftSidebar() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-between h-full w-full">
+    <div className="flex flex-col justify-between h-full w-full pe-2 2xl:px-3">
       <div className="flex flex-col gap-3 items-end 2xl:items-start">
         <Link
           className="flex items-center p-3 justify-start gap-4 h-10 hover:bg-neutral-500 rounded-full"
