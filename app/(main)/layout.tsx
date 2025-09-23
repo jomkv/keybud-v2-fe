@@ -8,7 +8,7 @@ export default function MainLayout({
 }>) {
   return (
     <div className="flex justify-center min-h-screen relative">
-      <div className="sticky top-0 h-screen w-[5rem] 2xl:w-[15rem] me-[1rem] 2xl:me-[2.5rem] py-5 flex-shrink-0">
+      <div className="sticky top-0 h-screen w-[5rem] 2xl:w-[15rem] me-[1rem] 2xl:me-[2.5rem] py-5 flex-shrink-0 overflow-y-auto">
         <LeftSidebar />
       </div>
       <div className="w-[45rem] min-h-screen border-s-[1px] border-e-[1px] border-solid border-neutral-700 flex flex-col divide-y divide-neutral-700">
