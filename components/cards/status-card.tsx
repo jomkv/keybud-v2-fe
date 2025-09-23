@@ -11,7 +11,7 @@ const attachments: string[] = [
   //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
 ];
 
-export function PostAttachments({ attachments }: { attachments: string[] }) {
+export function StatusAttachments({ attachments }: { attachments: string[] }) {
   if (attachments.length === 1) {
     return (
       <div className="w-full aspect-square my-2 overflow-hidden rounded-lg bg-neutral-800 flex items-center justify-center">
@@ -82,7 +82,7 @@ export function PostAttachments({ attachments }: { attachments: string[] }) {
   }
 }
 
-function PostCard() {
+function StatusCard() {
   return (
     <div className="flex p-4 gap-2">
       <img
@@ -114,7 +114,7 @@ function PostCard() {
         </p>
 
         {/* Assets (img, vid, audio) */}
-        <PostAttachments attachments={attachments} />
+        <StatusAttachments attachments={attachments} />
 
         {/* Footer */}
         <div className="flex gap-5">
@@ -137,4 +137,4 @@ function PostCard() {
   );
 }
 
-export default PostCard;
+export default StatusCard;

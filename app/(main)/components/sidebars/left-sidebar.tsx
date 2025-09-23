@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import CreatePostModal from "@/app/(main)/components/modals/create-post-modal";
+import CreateStatusModal from "@/app/(main)/components/modals/create-status-modal";
 import { Page } from "@/@types/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setPage } from "@/store/slices/navigationSlice";
@@ -89,8 +89,8 @@ export default function LeftSidebar() {
       page = "search";
     } else if (pathname === "/settings") {
       page = "settings";
-    } else if (pathname.startsWith("/post/")) {
-      page = "post";
+    } else if (pathname.startsWith("/status/")) {
+      page = "status";
     } else {
       page = "profile";
     }
@@ -140,7 +140,7 @@ export default function LeftSidebar() {
               <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
             </Button>
           </DialogTrigger>
-          <CreatePostModal />
+          <CreateStatusModal />
         </Dialog>
       </div>
     </div>

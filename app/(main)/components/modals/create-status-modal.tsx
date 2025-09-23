@@ -7,17 +7,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import CreatePostForm from "@/app/(main)/components/forms/create-post-form";
+import CreateStatusForm from "@/app/(main)/components/forms/create-status-form";
 
-export default function CreatePostModal() {
+export default function CreateStatusModal() {
   return (
     <DialogContent className="max-w-xl">
       <DialogHeader>
         <DialogTitle>Create Post</DialogTitle>
       </DialogHeader>
-      <CreatePostForm />
+      <CreateStatusForm />
       <DialogFooter>
-        <Button type="submit" form="create-post-form">
+        <Button type="submit" form="create-status-form">
           Submit
         </Button>
         <DialogClose asChild>

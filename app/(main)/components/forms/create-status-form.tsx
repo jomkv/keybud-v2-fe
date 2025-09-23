@@ -28,7 +28,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function CreatePostForm() {
+export default function CreateStatusForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +49,7 @@ export default function CreatePostForm() {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full space-y-6"
-        id="create-post-form"
+        id="create-status-form"
       >
         <FormField
           control={form.control}

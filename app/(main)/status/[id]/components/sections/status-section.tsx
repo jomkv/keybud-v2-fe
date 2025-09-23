@@ -1,9 +1,9 @@
-import { PostAttachments } from "@/components/cards/post-card";
+import { StatusAttachments } from "@/components/cards/status-card";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Repeat2, Star, Share } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import CommentForm from "@/app/(main)/post/[id]/components/forms/comment-form";
+import CommentForm from "@/app/(main)/status/[id]/components/forms/comment-form";
 
 function PostSection() {
   return (
@@ -40,7 +40,7 @@ function PostSection() {
       </p>
 
       {/* Assets (img, vid, audio) */}
-      <PostAttachments
+      <StatusAttachments
         attachments={[
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",

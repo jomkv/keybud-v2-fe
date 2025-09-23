@@ -5,7 +5,7 @@ export type Page =
   | "search"
   | "profile"
   | "settings"
-  | "post";
+  | "status";
 
 export interface NavigationState {
   currentPage: Page;

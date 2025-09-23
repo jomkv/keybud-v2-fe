@@ -1,18 +1,18 @@
-import PostCard from "@/components/cards/post-card";
+import StatusCard from "@/components/cards/status-card";
 import React from "react";
-import ProfileTab from "./components/tabs/profile-tab";
+import ProfileTab from "@/app/(main)/[username]/components/tabs/profile-tab";
 
 function Profile() {
   return (
     <>
       <ProfileTab />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
-      <PostCard />
+      <StatusCard />
+      <StatusCard />
+      <StatusCard />
+      <StatusCard />
+      <StatusCard />
+      <StatusCard />
+      <StatusCard />
     </>
   );
 }

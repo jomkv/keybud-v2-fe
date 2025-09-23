@@ -1,15 +1,14 @@
 import StatusCard from "@/components/cards/status-card";
+import React from "react";
 
-export default function Home() {
+function CommentsSection() {
   return (
     <>
-      <StatusCard />
-      <StatusCard />
-      <StatusCard />
-      <StatusCard />
       <StatusCard />
       <StatusCard />
       <StatusCard />
     </>
   );
 }
+
+export default CommentsSection;
