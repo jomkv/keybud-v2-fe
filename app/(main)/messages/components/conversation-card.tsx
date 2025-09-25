@@ -3,7 +3,7 @@ import { Ellipsis } from "lucide-react";
 
 function ConversationCard() {
   return (
-    <div className="flex justify-between p-3 cursor-pointer hover:bg-neutral-800">
+    <div className="flex justify-between p-3 cursor-pointer hover:bg-neutral-800 group transition-all">
       <div className="flex gap-2">
         <div className="w-12 h-12">
           <img
@@ -20,7 +20,7 @@ function ConversationCard() {
       <Button
         size="icon"
         variant="ghost"
-        className="rounded-full hover:bg-purple-500"
+        className="rounded-full hover:bg-purple-400/50 hover:text-purple-200 opacity-0 group-hover:opacity-100 transition-opacity"
       >
         <Ellipsis />
       </Button>

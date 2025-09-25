@@ -15,19 +15,23 @@ function Messages() {
         </Button>
       </div>
 
-      {/* Search Input with Icon */}
-      <div className="relative p-3">
-        <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-          <Search className="h-5 w-5 text-gray-500" />
+      <div className="flex flex-col gap-2">
+        {/* Search Input with Icon */}
+        <div className="relative p-3">
+          <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-500" />
+          </div>
+          <Input
+            placeholder="Search Messages"
+            className="pl-12 border-neutral-700 rounded-full text-white"
+          />
         </div>
-        <Input
-          placeholder="Search Messages"
-          className="pl-12 border-neutral-700 rounded-full text-white"
-        />
-      </div>
 
-      {/* Conversations */}
-      <div>
+        {/* Conversations */}
+        <ConversationCard />
+        <ConversationCard />
+        <ConversationCard />
+        <ConversationCard />
         <ConversationCard />
       </div>
     </>
