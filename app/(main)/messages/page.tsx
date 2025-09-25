@@ -2,16 +2,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Settings } from "lucide-react";
 import React from "react";
+import ConversationCard from "./components/conversation-card";
 
 function Messages() {
   return (
     <>
+      {/* Header */}
       <div className="flex justify-between items-end p-3">
         <p className="font-semibold text-3xl">Messages</p>
         <Button size="icon" variant="ghost">
           <Settings style={{ width: "90%", height: "90%" }} />
         </Button>
       </div>
+
       {/* Search Input with Icon */}
       <div className="relative p-3">
         <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
@@ -21,6 +24,11 @@ function Messages() {
           placeholder="Search Messages"
           className="pl-12 border-neutral-700 rounded-full text-white"
         />
+      </div>
+
+      {/* Conversations */}
+      <div>
+        <ConversationCard />
       </div>
     </>
   );
