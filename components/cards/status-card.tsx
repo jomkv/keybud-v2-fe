@@ -2,6 +2,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Repeat2, Star } from "lucide-react";
 import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Example attachments array (replace with your data)
 const attachments: string[] = [
@@ -99,9 +105,18 @@ function StatusCard() {
             <p className="font-light text-gray-400">·</p>
             <p className="font-light text-gray-400">Sep 14</p>
           </div>
-          <Button variant="ghost" size="sm" className="rounded-full">
-            <Ellipsis />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="rounded-full">
+                <Ellipsis />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>Pin</DropdownMenuItem>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Delete</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Description */}

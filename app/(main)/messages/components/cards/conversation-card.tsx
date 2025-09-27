@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function ConversationCard() {
   return (
@@ -17,13 +23,20 @@ function ConversationCard() {
           <p className="font-light">most recent message</p>
         </div>
       </div>
-      <Button
-        size="icon"
-        variant="ghost"
-        className="rounded-full hover:bg-purple-400/50 hover:text-purple-200 opacity-0 group-hover:opacity-100 transition-opacity"
-      >
-        <Ellipsis />
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="rounded-full hover:bg-purple-400/50 hover:text-purple-200 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <Ellipsis />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Delete Conversation</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
