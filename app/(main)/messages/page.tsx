@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Settings } from "lucide-react";
 import React from "react";
-import ConversationCard from "./components/conversation-card";
+import ConversationCard from "@/app/(main)/messages/components/cards/conversation-card";
 
 function Messages() {
   return (

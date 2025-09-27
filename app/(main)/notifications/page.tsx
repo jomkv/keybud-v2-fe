@@ -1,4 +1,4 @@
-import NotificationCard from "@/components/cards/notification-card";
+import NotificationCard from "@/app/(main)/notifications/components/cards/notification-card";
 import React from "react";
 
 function Notifications() {
