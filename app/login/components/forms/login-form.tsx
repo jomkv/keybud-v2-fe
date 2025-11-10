@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,11 +12,47 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { authSocket } from "@/app/socket";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [sessionId, setSessionId] = useState<string>(crypto.randomUUID());
+  const [googleLoginUrl, setGoogleLoginUrl] = useState<string>(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google?session=${sessionId}`
+  );
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+  const router = useRouter();
+
+  const handleGoogleLoginClick = () => {
+    window.open(googleLoginUrl, "_blank", "width=500,height=600");
+  };
+
+  useEffect(() => {
+    authSocket.connect();
+
+    if (!isSubscribed) {
+      authSocket.emit("auth:subscribe", { sessionId: sessionId });
+    }
+
+    authSocket.on("auth:complete", () => {
+      router.push("/");
+    });
+
+    authSocket.on("auth:subscribe_success", () => {
+      setIsSubscribed(true);
+    });
+
+    return () => {
+      // Disconnect socket when component dismounts
+      authSocket.disconnect();
+      setIsSubscribed(false);
+    };
+  }, []);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -28,11 +66,16 @@ export function LoginForm({
           <form>
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full" type="button">
                   <Icon icon="ph:github-logo-fill" />
                   Login with GitHub
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  type="button"
+                  onClick={handleGoogleLoginClick}
+                >
                   <Icon icon="ph:google-logo-bold" />
                   Login with Google
                 </Button>
