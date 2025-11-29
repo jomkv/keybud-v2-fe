@@ -8,6 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { StatusPayload } from "@/@types/status";
+import { formatDate } from "@/lib/utils";
 
 // Example attachments array (replace with your data)
 const attachments: string[] = [
@@ -16,6 +18,10 @@ const attachments: string[] = [
   //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
   //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
 ];
+
+interface StatusCardProps {
+  status: StatusPayload;
+}
 
 export function StatusAttachments({ attachments }: { attachments: string[] }) {
   if (attachments.length === 1) {
@@ -88,7 +94,7 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
   }
 }
 
-function StatusCard() {
+function StatusCard({ status }: StatusCardProps) {
   return (
     <div className="flex p-4 gap-2">
       <img
@@ -100,10 +106,14 @@ function StatusCard() {
         <div className="flex justify-between">
           <div className="flex gap-2 items-center">
             <Link href="/johndoe">
-              <p className="font-semibold text-lg hover:underline">@woozy</p>
+              <p className="font-semibold text-lg hover:underline">
+                @{status.user.username}
+              </p>
             </Link>
             <p className="font-light text-gray-400">·</p>
-            <p className="font-light text-gray-400">Sep 14</p>
+            <p className="font-light text-gray-400">
+              {formatDate(status.createdAt)}
+            </p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -119,14 +129,14 @@ function StatusCard() {
           </DropdownMenu>
         </div>
 
+        {/* Title */}
+        <p className="text-xl font-bold">{status.title}</p>
+
         {/* Description */}
-        <p className="text-lg">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique
-          corporis quaerat vel dolore quidem reiciendis ipsum cupiditate at,
-          quibusdam ipsam explicabo nostrum perferendis laborum officia nulla
-          voluptatibus ut consequatur aliquam! Quibusdam ipsam explicabo nostrum
-          perferendis laborum officia nulla voluptatibus ut consequatur aliquam!
-        </p>
+        <div
+          className="text-lg"
+          dangerouslySetInnerHTML={{ __html: status.description }}
+        />
 
         {/* Assets (img, vid, audio) */}
         <StatusAttachments attachments={attachments} />
@@ -134,17 +144,18 @@ function StatusCard() {
         {/* Footer */}
         <div className="flex gap-5">
           {/* Comment */}
-
           <Button variant="ghost" className="p-1">
-            <MessageSquare /> 10
+            <MessageSquare /> {status._count.comments}
           </Button>
 
+          {/* Repost */}
           <Button variant="ghost" className="p-1">
-            <Repeat2 /> 42
+            <Repeat2 /> {status._count.reposts}
           </Button>
 
+          {/* Star */}
           <Button variant="ghost" className="p-1">
-            <Star /> 106
+            <Star /> {status._count.stars}
           </Button>
         </div>
       </div>

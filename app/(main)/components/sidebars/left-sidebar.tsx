@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import CreateStatusModal from "@/app/(main)/components/modals/create-status-modal";
@@ -64,6 +64,8 @@ const LEFT_NAV_ITEMS: {
 ];
 
 export default function LeftSidebar() {
+  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
+
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { currentPage } = useAppSelector(
@@ -133,14 +135,17 @@ export default function LeftSidebar() {
         ))}
       </div>
       <div className="flex justify-end">
-        <Dialog>
+        <Dialog open={isCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl mt-5">
+            <Button
+              onClick={() => setIsCreateOpen(true)}
+              className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl mt-5"
+            >
               <p className="hidden 2xl:block">Post</p>
               <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
             </Button>
           </DialogTrigger>
-          <CreateStatusModal />
+          <CreateStatusModal closeModal={() => setIsCreateOpen(false)} />
         </Dialog>
       </div>
     </div>

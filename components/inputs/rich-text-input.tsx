@@ -1,3 +1,4 @@
+"use client";
 import "@/components/ui/minimal-tiptap/styles/index.css";
 
 import type { Content, Editor } from "@tiptap/react";
@@ -9,6 +10,7 @@ import { LinkBubbleMenu } from "@/components/ui/minimal-tiptap/components/bubble
 import { useMinimalTiptapEditor } from "@/components/ui/minimal-tiptap/hooks/use-minimal-tiptap";
 import { MeasuredContainer } from "@/components/ui/minimal-tiptap/components/measured-container";
 import SectionFour from "@/components/ui/minimal-tiptap/components/section/four";
+import { useEffect } from "react";
 
 export interface MinimalTiptapProps
   extends Omit<UseMinimalTiptapEditorProps, "onUpdate"> {
@@ -46,6 +48,18 @@ function RichTextInput({
     onUpdate: onChange,
     ...props,
   });
+
+  // Sync editor content with form value changes (including resets)
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      // Update editor content when form value changes (including reset to empty)
+      if (value === "" || value === null || value === undefined) {
+        editor.commands.clearContent();
+      } else {
+        editor.commands.setContent(value);
+      }
+    }
+  }, [editor, value]);
 
   if (!editor) {
     return null;

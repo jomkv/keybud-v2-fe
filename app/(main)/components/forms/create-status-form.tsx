@@ -14,6 +14,8 @@ import RichTextInput from "@/components/inputs/rich-text-input";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Status } from "@/@types/status";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -28,7 +30,15 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function CreateStatusForm() {
+interface CreateStatusFormProps {
+  submitForm: (values: any) => Promise<Status>;
+  closeModal: () => void;
+}
+
+export default function CreateStatusForm({
+  submitForm,
+  closeModal,
+}: CreateStatusFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,10 +48,17 @@ export default function CreateStatusForm() {
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    console.log("==Getting values from form==");
-    console.log(values);
-    console.log("Success: Values retrieved from form");
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const res = await submitForm(values);
+
+      closeModal();
+      toast.success("Post created");
+      form.reset();
+    } catch (error) {
+      console.log(error);
+      toast.warning("Something went wrong, please try again later");
+    }
   };
 
   return (
@@ -106,6 +123,7 @@ export default function CreateStatusForm() {
               <FormLabel>Attachments</FormLabel>
               <FormControl>
                 <Input
+                  {...field}
                   type="file"
                   multiple
                   onChange={(e) => {
