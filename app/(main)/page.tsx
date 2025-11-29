@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const statuses = useQuery({
-    queryKey: ["status"],
+    queryKey: ["statuses"],
     queryFn: statusApi.getAllStatus,
   });
 

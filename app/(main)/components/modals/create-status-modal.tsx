@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import CreateStatusForm from "@/app/(main)/components/forms/create-status-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statusApi } from "@/lib/api/status.api";
 import { Status } from "@/@types/status";
 
@@ -19,8 +19,16 @@ interface CreateStatusModalProps {
 export default function CreateStatusModal({
   closeModal,
 }: CreateStatusModalProps) {
+  const queryClient = useQueryClient();
+
   const createStatus = useMutation({
     mutationFn: statusApi.createStatus,
+    onSuccess: () => {
+      // Invalidate and refetch status queries
+      queryClient.invalidateQueries({
+        queryKey: ["statuses"],
+      });
+    },
   });
 
   const submitForm = async (values: any): Promise<Status> => {
