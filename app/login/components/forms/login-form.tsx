@@ -24,7 +24,6 @@ export function LoginForm({
   const [googleLoginUrl, setGoogleLoginUrl] = useState<string>(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google?session=${sessionId}`
   );
-  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const router = useRouter();
 
   const handleGoogleLoginClick = () => {
@@ -34,22 +33,15 @@ export function LoginForm({
   useEffect(() => {
     authSocket.connect();
 
-    if (!isSubscribed) {
-      authSocket.emit("auth:subscribe", { sessionId: sessionId });
-    }
+    authSocket.emit("auth:subscribe", { sessionId: sessionId });
 
     authSocket.on("auth:complete", () => {
       router.push("/");
     });
 
-    authSocket.on("auth:subscribe_success", () => {
-      setIsSubscribed(true);
-    });
-
     return () => {
       // Disconnect socket when component dismounts
       authSocket.disconnect();
-      setIsSubscribed(false);
     };
   }, []);
 
