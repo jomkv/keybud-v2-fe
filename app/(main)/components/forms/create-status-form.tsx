@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Status } from "@/@types/status";
 import { toast } from "sonner";
+import { useRef } from "react";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -39,6 +40,8 @@ export default function CreateStatusForm({
   submitForm,
   closeModal,
 }: CreateStatusFormProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +58,9 @@ export default function CreateStatusForm({
       closeModal();
       toast.success("Post created");
       form.reset();
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.log(error);
       toast.warning("Something went wrong, please try again later");
@@ -123,7 +129,7 @@ export default function CreateStatusForm({
               <FormLabel>Attachments</FormLabel>
               <FormControl>
                 <Input
-                  {...field}
+                  ref={fileInputRef}
                   type="file"
                   multiple
                   onChange={(e) => {
