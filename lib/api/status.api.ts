@@ -34,4 +34,8 @@ export const statusApi = {
     });
     return res.data;
   },
+
+  async deleteStatus(statusId: number): Promise<void> {
+    await apiInstance.delete<void>(`/api/status/${statusId}`);
+  },
 };
