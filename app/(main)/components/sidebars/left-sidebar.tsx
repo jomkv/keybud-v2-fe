@@ -135,7 +135,7 @@ export default function LeftSidebar() {
         ))}
       </div>
       <div className="flex justify-end">
-        <Dialog open={isCreateOpen}>
+        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
             <Button
               onClick={() => setIsCreateOpen(true)}
