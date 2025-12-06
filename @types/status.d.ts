@@ -5,6 +5,7 @@ export interface S3Attachment {
   statusId: number;
   key: string;
   createdAt: string;
+  signedUrl: string;
 }
 
 export interface Status {

@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Repeat2, Star } from "lucide-react";
 import Link from "next/link";
@@ -8,27 +8,28 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { StatusPayload } from "@/@types/status";
+import { S3Attachment, StatusPayload } from "@/@types/status";
 import { formatDate } from "@/lib/utils";
-
-// Example attachments array (replace with your data)
-const attachments: string[] = [
-  //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
-  //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
-  //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
-  //"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
-];
-
+import { useState } from "react";
+import { Dialog } from "../ui/dialog";
+import { ConfirmModal } from "../modals/confirm-modal";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { statusApi } from "@/lib/api/status.api";
+import { toast } from "sonner";
 interface StatusCardProps {
   status: StatusPayload;
 }
 
-export function StatusAttachments({ attachments }: { attachments: string[] }) {
+export function StatusAttachments({
+  attachments,
+}: {
+  attachments: S3Attachment[];
+}) {
   if (attachments.length === 1) {
     return (
       <div className="w-full aspect-square my-2 overflow-hidden rounded-lg bg-neutral-800 flex items-center justify-center">
         <img
-          src={attachments[0]}
+          src={attachments[0].signedUrl}
           alt=""
           className="object-contain w-full h-full"
         />
@@ -37,10 +38,10 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
   } else if (attachments.length === 2) {
     return (
       <div className="w-full aspect-3/2 my-2 grid grid-cols-2 gap-1 overflow-hidden rounded-lg">
-        {attachments.map((src, i) => (
+        {attachments.map((attachment, i) => (
           <img
             key={i}
-            src={src}
+            src={attachment.signedUrl}
             alt=""
             className="object-cover w-full h-full"
           />
@@ -53,7 +54,7 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
         {/* Left tall image */}
         <div className="row-span-2 col-span-1 relative overflow-hidden">
           <img
-            src={attachments[0]}
+            src={attachments[0].signedUrl}
             alt=""
             className="object-cover w-full h-full"
           />
@@ -61,7 +62,7 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
         {/* Top right */}
         <div className="col-span-1 relative overflow-hidden">
           <img
-            src={attachments[1]}
+            src={attachments[1].signedUrl}
             alt=""
             className="object-cover w-full h-full"
           />
@@ -69,7 +70,7 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
         {/* Bottom right */}
         <div className="col-span-1 relative overflow-hidden">
           <img
-            src={attachments[2]}
+            src={attachments[2].signedUrl}
             alt=""
             className="object-cover w-full h-full"
           />
@@ -79,12 +80,16 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
   } else if (attachments.length === 4) {
     return (
       <div className="w-full aspect-square my-2 grid grid-cols-2 grid-rows-2 gap-2 overflow-hidden rounded-lg">
-        {attachments.map((src, i) => (
+        {attachments.map((attachment, i) => (
           <div
             key={i}
             className="relative w-full h-full aspect-square overflow-hidden"
           >
-            <img src={src} alt="" className="object-cover w-full h-full" />
+            <img
+              src={attachment.signedUrl}
+              alt=""
+              className="object-cover w-full h-full"
+            />
           </div>
         ))}
       </div>
@@ -95,6 +100,31 @@ export function StatusAttachments({ attachments }: { attachments: string[] }) {
 }
 
 function StatusCard({ status }: StatusCardProps) {
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
+
+  const deleteStatus = useMutation({
+    mutationFn: statusApi.deleteStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["statuses"],
+      });
+    },
+  });
+
+  const handleDelete = async () => {
+    try {
+      const res = await deleteStatus.mutateAsync(status.id);
+
+      setIsDeleteOpen(false);
+      toast.success("Post deleted");
+    } catch (error) {
+      console.log(error);
+      toast.warning("Something went wrong, please try again later");
+    }
+  };
+
   return (
     <div className="flex p-4 gap-2">
       <img
@@ -123,8 +153,12 @@ function StatusCard({ status }: StatusCardProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>Pin</DropdownMenuItem>
+
               <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Delete</DropdownMenuItem>
+
+              <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -139,7 +173,7 @@ function StatusCard({ status }: StatusCardProps) {
         />
 
         {/* Assets (img, vid, audio) */}
-        <StatusAttachments attachments={attachments} />
+        <StatusAttachments attachments={status.attachments} />
 
         {/* Footer */}
         <div className="flex gap-5">
@@ -159,6 +193,16 @@ function StatusCard({ status }: StatusCardProps) {
           </Button>
         </div>
       </div>
+
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <ConfirmModal
+          title={`Delete "${status.title}"`}
+          description={`Are you sure you want to delete this post?`}
+          handleConfirm={handleDelete}
+          closeModal={() => setIsDeleteOpen(false)}
+          isConfirming={deleteStatus.isPending}
+        />
+      </Dialog>
     </div>
   );
 }
