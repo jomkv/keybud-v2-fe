@@ -10,7 +10,7 @@ import {
 import CreateStatusForm from "@/app/(main)/components/forms/create-status-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statusApi } from "@/lib/api/status.api";
-import { Status } from "@/@types/status";
+import { CreateStatus, Status } from "@/@types/status";
 
 interface CreateStatusModalProps {
   closeModal: () => void;
@@ -31,7 +31,7 @@ export default function CreateStatusModal({
     },
   });
 
-  const submitForm = async (values: any): Promise<Status> => {
+  const submitForm = async (values: CreateStatus): Promise<Status> => {
     return await createStatus.mutateAsync(values);
   };
 

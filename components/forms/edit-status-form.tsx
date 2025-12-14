@@ -14,12 +14,18 @@ import RichTextInput from "@/components/inputs/rich-text-input";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AttachmentInput, CreateStatus, Status } from "@/@types/status";
+import {
+  AttachmentInput,
+  S3Attachment,
+  Status,
+  StatusPayload,
+} from "@/@types/status";
 import { toast } from "sonner";
-import { useRef, useState } from "react";
-import AttachmentFormField from "@/components/form-fields/attachment-form-field";
+import { useEffect, useRef, useState } from "react";
+import AttachmentFormField from "../form-fields/attachment-form-field";
 
 const formSchema = z.object({
+  id: z.int(),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   attachments: z
@@ -32,23 +38,44 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface CreateStatusFormProps {
-  submitForm: (values: CreateStatus) => Promise<Status>;
+interface EditStatusFormProps {
+  submitForm: (values: any) => Promise<Status>;
   closeModal: () => void;
+  status: StatusPayload;
 }
 
-export default function CreateStatusForm({
+const initializeAttachments = (
+  attachments: S3Attachment[]
+): AttachmentInput[] => {
+  return attachments.map(
+    (att): AttachmentInput => ({
+      type: "old",
+      id: att.id,
+      previewUrl: att.signedUrl,
+    })
+  );
+};
+
+export default function EditStatusForm({
   submitForm,
   closeModal,
-}: CreateStatusFormProps) {
+  status,
+}: EditStatusFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [attachments, setAttachments] = useState<AttachmentInput[]>([]);
+  const [attachments, setAttachments] = useState<AttachmentInput[]>(
+    initializeAttachments(status.attachments)
+  );
+
+  useEffect(() => {
+    console.log(attachments);
+  }, [attachments]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      id: status.id,
+      title: status.title || "",
+      description: status.description,
       attachments: [],
     },
   });
@@ -59,7 +86,7 @@ export default function CreateStatusForm({
       await submitForm(formValues);
 
       closeModal();
-      toast.success("Post created");
+      toast.success("Post edited");
       form.reset();
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -75,7 +102,7 @@ export default function CreateStatusForm({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full space-y-6"
-        id="create-status-form"
+        id="edit-status-form"
       >
         <FormField
           control={form.control}

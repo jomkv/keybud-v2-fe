@@ -16,6 +16,7 @@ import { ConfirmModal } from "../modals/confirm-modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statusApi } from "@/lib/api/status.api";
 import { toast } from "sonner";
+import EditStatusModal from "../modals/edit-status-modal";
 interface StatusCardProps {
   status: StatusPayload;
 }
@@ -100,6 +101,7 @@ export function StatusAttachments({
 }
 
 function StatusCard({ status }: StatusCardProps) {
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
@@ -154,7 +156,9 @@ function StatusCard({ status }: StatusCardProps) {
             <DropdownMenuContent>
               <DropdownMenuItem>Pin</DropdownMenuItem>
 
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
+                Edit
+              </DropdownMenuItem>
 
               <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
                 Delete
@@ -199,10 +203,14 @@ function StatusCard({ status }: StatusCardProps) {
           title={`Delete "${status.title}"`}
           description={`Are you sure you want to delete this post?`}
           handleConfirm={handleDelete}
-          closeModal={() => setIsDeleteOpen(false)}
           isConfirming={deleteStatus.isPending}
         />
       </Dialog>
+      <EditStatusModal
+        open={isEditOpen}
+        setOpen={setIsEditOpen}
+        status={status}
+      />
     </div>
   );
 }
