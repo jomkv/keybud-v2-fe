@@ -7,6 +7,16 @@ import {
 import { apiInstance } from "./api";
 
 export const statusApi = {
+  async getStatus(statusId: number): Promise<StatusPayload> {
+    const res = await apiInstance.get<{
+      data: {
+        status: StatusPayload;
+      };
+    }>(`/api/status/${statusId}`);
+
+    return res.data.data.status;
+  },
+
   async getAllStatus(): Promise<StatusPayload[]> {
     const res = await apiInstance.get<{ data: StatusPayload[] }>("/api/status");
 

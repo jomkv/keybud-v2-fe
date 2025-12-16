@@ -122,7 +122,6 @@ function StatusCard({ status }: StatusCardProps) {
       setIsDeleteOpen(false);
       toast.success("Post deleted");
     } catch (error) {
-      console.log(error);
       toast.warning("Something went wrong, please try again later");
     }
   };
