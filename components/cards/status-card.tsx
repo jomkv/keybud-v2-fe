@@ -17,6 +17,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statusApi } from "@/lib/api/status.api";
 import { toast } from "sonner";
 import EditStatusModal from "../modals/edit-status-modal";
+import { useRouter } from "next/navigation";
 interface StatusCardProps {
   status: StatusPayload;
 }
@@ -105,6 +106,7 @@ function StatusCard({ status }: StatusCardProps) {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const deleteStatus = useMutation({
     mutationFn: statusApi.deleteStatus,
@@ -126,13 +128,19 @@ function StatusCard({ status }: StatusCardProps) {
     }
   };
 
+  const onBodyClick = () => {
+    router.push(`/status/${status.id}`);
+  };
+
   return (
     <div className="flex p-4 gap-2">
       <img
         src="/assets/user_icon.png"
         className="rounded-full w-12 h-12 mt-3"
       />
-      <div className="flex-1 flex flex-col">
+
+      {/* Body */}
+      <div className="flex-1 flex flex-col" onClick={onBodyClick}>
         {/* Header (username, date, settings btn) */}
         <div className="flex justify-between">
           <div className="flex gap-2 items-center">
@@ -147,7 +155,7 @@ function StatusCard({ status }: StatusCardProps) {
             </p>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="sm" className="rounded-full">
                 <Ellipsis />
               </Button>
@@ -179,7 +187,7 @@ function StatusCard({ status }: StatusCardProps) {
         <StatusAttachments attachments={status.attachments} />
 
         {/* Footer */}
-        <div className="flex gap-5">
+        <div className="flex gap-5" onClick={(e) => e.stopPropagation()}>
           {/* Comment */}
           <Button variant="ghost" className="p-1">
             <MessageSquare /> {status._count.comments}

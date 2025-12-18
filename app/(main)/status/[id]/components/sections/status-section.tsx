@@ -4,8 +4,14 @@ import { Ellipsis, MessageSquare, Repeat2, Star, Share } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import CommentForm from "@/app/(main)/status/[id]/components/forms/comment-form";
+import { StatusPayload } from "@/@types/status";
+import { formatDate, formatDetailedDate } from "@/lib/utils";
 
-function PostSection() {
+interface StatusSectionProps {
+  status: StatusPayload;
+}
+
+function StatusSection({ status }: StatusSectionProps) {
   return (
     <div className="flex flex-col p-4 gap-2">
       {/* Header  */}
@@ -16,7 +22,9 @@ function PostSection() {
             className="rounded-full w-12 h-12 mt-3"
           />
           <Link href="/johndoe">
-            <p className="font-semibold text-lg hover:underline">@woozy</p>
+            <p className="font-semibold text-lg hover:underline">
+              @{status.user.username}
+            </p>
           </Link>
         </div>
 
@@ -30,25 +38,22 @@ function PostSection() {
         </div>
       </div>
 
-      {/* Description */}
-      <p className="text-lg">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique
-        corporis quaerat vel dolore quidem reiciendis ipsum cupiditate at,
-        quibusdam ipsam explicabo nostrum perferendis laborum officia nulla
-        voluptatibus ut consequatur aliquam! Quibusdam ipsam explicabo nostrum
-        perferendis laborum officia nulla voluptatibus ut consequatur aliquam!
-      </p>
+      {/* Title */}
+      <p className="text-xl font-bold">{status.title}</p>
 
-      {/* Assets (img, vid, audio) */}
-      <StatusAttachments
-        attachments={[
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiJ5rAqr1pIi6pHOdFGGijRXcE4HLHqWJNSw&s",
-        ]}
+      {/* Description */}
+      <div
+        className="text-lg"
+        dangerouslySetInnerHTML={{ __html: status.description }}
       />
 
+      {/* Assets (img, vid, audio) */}
+      <StatusAttachments attachments={status.attachments} />
+
       {/* Timestamp */}
-      <div className="font-light text-gray-400">12:11 AM · Sep 21, 2025</div>
+      <div className="font-light text-gray-400">
+        {formatDetailedDate(status.createdAt)}
+      </div>
 
       {/* Footer */}
       <div className="flex justify-between border-y-[1px] border-neutral-700 py-2">
@@ -72,4 +77,4 @@ function PostSection() {
   );
 }
 
-export default PostSection;
+export default StatusSection;

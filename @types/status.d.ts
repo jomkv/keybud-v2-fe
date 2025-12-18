@@ -36,6 +36,12 @@ export interface StatusPayload extends Status {
   };
 }
 
+export interface StatusPayloadWithRelations {
+  status: StatusPayload;
+  parentStatus: StatusPayload | null;
+  childrenStatuses: StatusPayload[];
+}
+
 export type CreateStatus = Omit<
   Status,
   "id" | "userId" | "createdAt" | "edittedAt" | "attachments"

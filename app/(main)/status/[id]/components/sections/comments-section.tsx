@@ -1,12 +1,17 @@
+import { StatusPayload } from "@/@types/status";
 import StatusCard from "@/components/cards/status-card";
 import React from "react";
 
-function CommentsSection() {
+interface CommentsSectionProps {
+  comments: StatusPayload[];
+}
+
+function CommentsSection({ comments }: CommentsSectionProps) {
   return (
     <>
-      <StatusCard />
-      <StatusCard />
-      <StatusCard />
+      {comments.map((comment, index) => (
+        <StatusCard status={comment} key={index} />
+      ))}
     </>
   );
 }

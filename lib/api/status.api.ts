@@ -3,18 +3,17 @@ import {
   EditStatus,
   Status,
   StatusPayload,
+  StatusPayloadWithRelations,
 } from "@/@types/status";
 import { apiInstance } from "./api";
 
 export const statusApi = {
-  async getStatus(statusId: number): Promise<StatusPayload> {
+  async getStatus(statusId: number): Promise<StatusPayloadWithRelations> {
     const res = await apiInstance.get<{
-      data: {
-        status: StatusPayload;
-      };
+      data: StatusPayloadWithRelations;
     }>(`/api/status/${statusId}`);
 
-    return res.data.data.status;
+    return res.data.data;
   },
 
   async getAllStatus(): Promise<StatusPayload[]> {
