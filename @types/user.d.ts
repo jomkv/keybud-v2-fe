@@ -5,3 +5,7 @@ export interface User {
   email: string;
   switchType: string;
 }
+
+export interface UserState {
+  user: User | null;
+}
