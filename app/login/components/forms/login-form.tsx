@@ -20,30 +20,36 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [sessionId, setSessionId] = useState<string>(crypto.randomUUID());
-  const [googleLoginUrl, setGoogleLoginUrl] = useState<string>(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google?session=${sessionId}`
-  );
-  const router = useRouter();
-
-  const handleGoogleLoginClick = () => {
-    window.open(googleLoginUrl, "_blank", "width=500,height=600");
-  };
+  const [sessionId, setSessionId] = useState<string>("");
 
   useEffect(() => {
+    const id = crypto.randomUUID();
+    setSessionId(id);
+
     authSocket.connect();
 
-    authSocket.emit("auth:subscribe", { sessionId: sessionId });
+    const handleAuthComplete = () => {
+      window.location.href = "/?refresh=true";
+      authSocket.disconnect();
+    };
 
-    authSocket.on("auth:complete", () => {
-      router.push("/");
+    authSocket.on("connect", () => {
+      authSocket.emit("auth:subscribe", { sessionId: id });
     });
 
+    authSocket.on("auth:complete", handleAuthComplete);
+
+    // 4.Remove specific listener and disconnect
     return () => {
-      // Disconnect socket when component dismounts
+      authSocket.off("auth:complete", handleAuthComplete);
       authSocket.disconnect();
     };
   }, []);
+
+  const handleGoogleLoginClick = () => {
+    const googleAuthUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/google?session=${sessionId}`;
+    window.open(googleAuthUrl, "_blank", "width=500,height=600");
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -67,6 +73,7 @@ export function LoginForm({
                   className="w-full"
                   type="button"
                   onClick={handleGoogleLoginClick}
+                  disabled={!sessionId}
                 >
                   <Icon icon="ph:google-logo-bold" />
                   Login with Google
