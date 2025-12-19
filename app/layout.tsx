@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import StoreProvider from "@/components/providers/store-provider";
 import { QueryClientProvider } from "@/components/providers/query-client-provider";
 import { Toaster } from "@/components/ui/sonner";
+import StoreInitializer from "@/components/initializers/store-initializer";
+import { getMe } from "@/lib/helpers/get-me";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,11 +23,13 @@ export const metadata: Metadata = {
   description: "Social Media Platform For Keyboard Addicts",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getMe();
+
   return (
     <html lang="en" className="dark">
       <body
@@ -33,6 +37,7 @@ export default function RootLayout({
       >
         <Toaster />
         <StoreProvider>
+          <StoreInitializer user={user} />
           <QueryClientProvider>
             <TooltipProvider>{children}</TooltipProvider>
           </QueryClientProvider>
