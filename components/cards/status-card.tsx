@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Repeat2, Star } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ import { statusApi } from "@/lib/api/status.api";
 import { toast } from "sonner";
 import EditStatusModal from "../modals/edit-status-modal";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/use-user";
 interface StatusCardProps {
   status: StatusPayload;
 }
@@ -107,6 +109,7 @@ function StatusCard({ status }: StatusCardProps) {
 
   const queryClient = useQueryClient();
   const router = useRouter();
+  const user = useUser();
 
   const deleteStatus = useMutation({
     mutationFn: statusApi.deleteStatus,
@@ -154,24 +157,26 @@ function StatusCard({ status }: StatusCardProps) {
               {formatDate(status.createdAt)}
             </p>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="rounded-full">
-                <Ellipsis />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Pin</DropdownMenuItem>
+          {user?.id === status.userId && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="sm" className="rounded-full">
+                  <Ellipsis />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Pin</DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
-                Edit
-              </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
+                  Edit
+                </DropdownMenuItem>
 
-              <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         {/* Title */}
