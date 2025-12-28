@@ -1,0 +1,42 @@
+import { Conversation, Message } from "@/@types/conversation";
+import { apiInstance } from "./api";
+
+export const conversationApi = {
+  async getAllConversations(): Promise<Conversation[]> {
+    const res = await apiInstance.get<{ data: Conversation[] }>(
+      "/api/conversation"
+    );
+
+    return res.data.data;
+  },
+
+  async getConversation(
+    conversationId: number,
+    reset: boolean = false
+  ): Promise<Conversation> {
+    const res = await apiInstance.get<{ data: Conversation }>(
+      `/api/conversation/${conversationId}${reset ? "?reset=true" : ""}`
+    );
+
+    return res.data.data;
+  },
+
+  async createConversation(members: number[]): Promise<void> {
+    const res = await apiInstance.post<{
+      data: Omit<Conversation, "members" | "messages">;
+    }>("/api/conversation", {
+      memberIds: members,
+    });
+
+    return;
+  },
+
+  async createMessage(content: string, conversationId: number): Promise<void> {
+    const res = await apiInstance.post<{ data: Message }>("/api/message", {
+      conversationId: conversationId,
+      content: content,
+    });
+
+    return;
+  },
+};
