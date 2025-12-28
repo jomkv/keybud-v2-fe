@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Ellipsis } from "lucide-react";
 import {
@@ -6,10 +8,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Conversation } from "@/@types/conversation";
+import Link from "next/link";
+import { getRecipientUsername } from "@/lib/utils";
+import { useUser } from "@/hooks/use-user";
 
-function ConversationCard() {
+interface ConversationCardProps {
+  conversation: Conversation;
+}
+
+function ConversationCard({ conversation }: ConversationCardProps) {
+  const user = useUser();
+
   return (
-    <div className="flex justify-between p-3 cursor-pointer hover:bg-neutral-800 group transition-all">
+    <Link
+      href={`/messages/${conversation.id}`}
+      className="flex justify-between p-3 cursor-pointer hover:bg-neutral-800 group transition-all"
+    >
       <div className="flex gap-2">
         <div className="w-12 h-12">
           <img
@@ -19,8 +34,11 @@ function ConversationCard() {
         </div>
 
         <div className="flex-1">
-          <p className="font-bold text-lg">@johndoe</p>
-          <p className="font-light">most recent message</p>
+          <p className="font-bold text-lg">
+            {conversation.name ||
+              getRecipientUsername(conversation.members, user?.id as number)}
+          </p>
+          <p className="font-light">{conversation.messages[0]?.content}</p>
         </div>
       </div>
       <DropdownMenu>
@@ -37,7 +55,7 @@ function ConversationCard() {
           <DropdownMenuItem>Delete Conversation</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </Link>
   );
 }
 

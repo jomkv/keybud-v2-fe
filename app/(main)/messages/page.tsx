@@ -11,9 +11,23 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
+import { conversationApi } from "@/lib/api/conversation.api";
+import Loader from "@/components/defaults/loader";
 
 function Messages() {
   const [enableNotifs, setEnableNotifs] = useState<boolean>(true);
+
+  const {
+    isLoading,
+    isSuccess,
+    data: conversations,
+  } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: conversationApi.getAllConversations,
+  });
+
+  if (isLoading) return <Loader size={50} />;
 
   return (
     <>
@@ -51,11 +65,13 @@ function Messages() {
         </div>
 
         {/* Conversations */}
-        <ConversationCard />
-        <ConversationCard />
-        <ConversationCard />
-        <ConversationCard />
-        <ConversationCard />
+        {isSuccess && (
+          <>
+            {conversations.map((convo, index) => (
+              <ConversationCard key={index} conversation={convo} />
+            ))}
+          </>
+        )}
       </div>
     </>
   );

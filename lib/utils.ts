@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { ConversationMember } from "@/@types/conversation";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -30,4 +31,13 @@ export function formatDetailedDate(
     hour12: true,
     timeZone,
   }).format(date);
+}
+
+export function getRecipientUsername(
+  members: ConversationMember[],
+  userId: number
+): string | null {
+  return (
+    members.filter((member) => member.id !== userId)[0]?.user.username || null
+  );
 }
