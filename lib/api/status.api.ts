@@ -97,4 +97,20 @@ export const statusApi = {
   async deleteStatus(statusId: number): Promise<void> {
     await apiInstance.delete<void>(`/api/status/${statusId}`);
   },
+
+  async starStatus(statusId: number): Promise<void> {
+    await apiInstance.post<void>(`/api/status/${statusId}/star`);
+  },
+
+  async unstarStatus(statusId: number): Promise<void> {
+    await apiInstance.delete<void>(`/api/status/${statusId}/star`);
+  },
+
+  async repostStatus(statusId: number): Promise<void> {
+    await apiInstance.post<void>(`/api/status/${statusId}/repost`);
+  },
+
+  async unrepostStatus(statusId: number): Promise<void> {
+    await apiInstance.delete<void>(`/api/status/${statusId}/repost`);
+  },
 };

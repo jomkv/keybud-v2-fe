@@ -6,14 +6,27 @@ import CommentsSection from "@/app/(main)/status/[id]/components/sections/commen
 import { useQuery } from "@tanstack/react-query";
 import { statusApi } from "@/lib/api/status.api";
 import { useParams } from "next/navigation";
+import NotFound from "@/components/defaults/not-found";
+import Loader from "@/components/defaults/loader";
 
 function Status() {
   const { id } = useParams<{ id: string }>();
+  const statusId = Number(id);
 
   const statusWithRelations = useQuery({
-    queryKey: ["status"],
+    queryKey: ["status", statusId],
     queryFn: () => statusApi.getStatus(+id),
+    enabled: Number.isFinite(statusId),
   });
+
+  if (statusWithRelations.isError)
+    return (
+      <NotFound
+        topic="Status"
+        description="Status does not exist or was deleted."
+      />
+    );
+  if (statusWithRelations.isLoading) return <Loader size={50} />;
 
   return (
     <>

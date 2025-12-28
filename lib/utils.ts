@@ -12,22 +12,22 @@ export function formatDate(date: string): string {
   return dayjs(date).fromNow();
 }
 
-export function formatDetailedDate(dateStr: string): string {
-  const date = new Date(dateStr);
+export function formatDetailedDate(
+  dateInput: string | number | Date,
+  timeZone: string = "UTC"
+): string {
+  const date =
+    typeof dateInput === "string" || typeof dateInput === "number"
+      ? new Date(dateInput)
+      : dateInput;
 
-  // Format time (12:11 AM)
-  const time = date.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-
-  // Format date (Sep 21, 2025)
-  const formattedDate = date.toLocaleString("en-US", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
-  });
-
-  return `${time} · ${formattedDate}`;
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone,
+  }).format(date);
 }

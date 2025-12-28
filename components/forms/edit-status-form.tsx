@@ -21,7 +21,7 @@ import {
   StatusPayload,
 } from "@/@types/status";
 import { toast } from "sonner";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import AttachmentFormField from "../form-fields/attachment-form-field";
 
 const formSchema = z.object({
@@ -66,10 +66,6 @@ export default function EditStatusForm({
     initializeAttachments(status.attachments)
   );
 
-  useEffect(() => {
-    console.log(attachments);
-  }, [attachments]);
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,7 +88,6 @@ export default function EditStatusForm({
         fileInputRef.current.value = "";
       }
     } catch (error) {
-      console.log(error);
       toast.warning("Something went wrong, please try again later");
     }
   };

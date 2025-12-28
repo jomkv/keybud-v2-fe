@@ -1,27 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Ellipsis, MessageSquare, Repeat2, Star } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { S3Attachment, StatusPayload } from "@/@types/status";
-import { formatDate } from "@/lib/utils";
-import { useState } from "react";
-import { Dialog } from "../ui/dialog";
-import { ConfirmModal } from "../modals/confirm-modal";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { statusApi } from "@/lib/api/status.api";
-import { toast } from "sonner";
-import EditStatusModal from "../modals/edit-status-modal";
+import { cn, formatDate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/use-user";
+import StatusSettingsButton from "../buttons/status-settings-button";
+import StarButton from "../buttons/star-button";
+import RepostButton from "../buttons/repost-button";
+import CommentButton from "../buttons/comment-button";
 interface StatusCardProps {
   status: StatusPayload;
+  isPreview?: boolean;
 }
 
 export function StatusAttachments({
@@ -103,35 +95,13 @@ export function StatusAttachments({
   }
 }
 
-function StatusCard({ status }: StatusCardProps) {
-  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
-
-  const queryClient = useQueryClient();
+function StatusCard({ status, isPreview = false }: StatusCardProps) {
   const router = useRouter();
   const user = useUser();
 
-  const deleteStatus = useMutation({
-    mutationFn: statusApi.deleteStatus,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["statuses"],
-      });
-    },
-  });
-
-  const handleDelete = async () => {
-    try {
-      const res = await deleteStatus.mutateAsync(status.id);
-
-      setIsDeleteOpen(false);
-      toast.success("Post deleted");
-    } catch (error) {
-      toast.warning("Something went wrong, please try again later");
-    }
-  };
-
   const onBodyClick = () => {
+    if (isPreview) return;
+
     router.push(`/status/${status.id}`);
   };
 
@@ -143,86 +113,65 @@ function StatusCard({ status }: StatusCardProps) {
       />
 
       {/* Body */}
-      <div className="flex-1 flex flex-col" onClick={onBodyClick}>
+      <div className="flex-1 flex flex-col">
         {/* Header (username, date, settings btn) */}
         <div className="flex justify-between">
-          <div className="flex gap-2 items-center">
-            <Link href="/johndoe">
-              <p className="font-semibold text-lg hover:underline">
-                @{status.user.username}
-              </p>
-            </Link>
+          <div className="flex gap-2 items-center ">
+            {isPreview ? (
+              <p className="font-semibold text-lg">@{status.user.username}</p>
+            ) : (
+              <Link href={`/${user?.username}`}>
+                <p className="font-semibold text-lg hover:underline">
+                  @{status.user.username}
+                </p>
+              </Link>
+            )}
+
             <p className="font-light text-gray-400">·</p>
             <p className="font-light text-gray-400">
               {formatDate(status.createdAt)}
             </p>
           </div>
-          {user?.id === status.userId && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="sm" className="rounded-full">
-                  <Ellipsis />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>Pin</DropdownMenuItem>
 
-                <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
-                  Edit
-                </DropdownMenuItem>
-
-                <DropdownMenuItem onClick={() => setIsDeleteOpen(true)}>
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+          {!isPreview && <StatusSettingsButton status={status} />}
         </div>
 
-        {/* Title */}
-        <p className="text-xl font-bold">{status.title}</p>
-
-        {/* Description */}
         <div
-          className="text-lg"
-          dangerouslySetInnerHTML={{ __html: status.description }}
-        />
+          onClick={onBodyClick}
+          className={cn(isPreview ? "" : "cursor-pointer")}
+        >
+          {/* Title */}
+          <p className="text-xl font-bold line-clamp-1">{status.title}</p>
 
-        {/* Assets (img, vid, audio) */}
-        <StatusAttachments attachments={status.attachments} />
+          {/* Description */}
+          <div
+            className="text-lg line-clamp-3"
+            dangerouslySetInnerHTML={{ __html: status.description }}
+          />
+
+          {/* Assets (img, vid, audio) */}
+          {!isPreview && <StatusAttachments attachments={status.attachments} />}
+        </div>
 
         {/* Footer */}
-        <div className="flex gap-5" onClick={(e) => e.stopPropagation()}>
-          {/* Comment */}
-          <Button variant="ghost" className="p-1">
-            <MessageSquare /> {status._count.comments}
-          </Button>
+        {!isPreview && (
+          <div className="flex gap-5" onClick={(e) => e.stopPropagation()}>
+            <StarButton
+              statusId={status.id}
+              isStarred={status.isStarred}
+              count={status._count.stars}
+            />
 
-          {/* Repost */}
-          <Button variant="ghost" className="p-1">
-            <Repeat2 /> {status._count.reposts}
-          </Button>
+            <RepostButton
+              statusId={status.id}
+              isReposted={status.isReposted}
+              count={status._count.reposts}
+            />
 
-          {/* Star */}
-          <Button variant="ghost" className="p-1">
-            <Star /> {status._count.stars}
-          </Button>
-        </div>
+            <CommentButton status={status} />
+          </div>
+        )}
       </div>
-
-      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <ConfirmModal
-          title={`Delete "${status.title}"`}
-          description={`Are you sure you want to delete this post?`}
-          handleConfirm={handleDelete}
-          isConfirming={deleteStatus.isPending}
-        />
-      </Dialog>
-      <EditStatusModal
-        open={isEditOpen}
-        setOpen={setIsEditOpen}
-        status={status}
-      />
     </div>
   );
 }

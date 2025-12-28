@@ -1,4 +1,4 @@
-import { UserState, User } from "@/@types/user";
+import { UserState, UserPayload } from "@/@types/user";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: UserState = {
@@ -9,7 +9,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User | null>) => {
+    setUser: (state, action: PayloadAction<UserPayload | null>) => {
       state.user = action.payload;
     },
     clearUser: (state) => {

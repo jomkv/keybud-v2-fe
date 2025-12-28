@@ -4,8 +4,7 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import CreateStatusModal from "@/app/(main)/components/modals/create-status-modal";
+import CreateStatusModal from "@/components/modals/create-status-modal";
 import { Page } from "@/@types/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setPage } from "@/store/slices/navigationSlice";
@@ -65,6 +64,7 @@ const LEFT_NAV_ITEMS: {
 
 export default function LeftSidebar() {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   const pathname = usePathname();
   const dispatch = useAppDispatch();
@@ -98,7 +98,12 @@ export default function LeftSidebar() {
     }
 
     dispatch(setPage(page));
+    setIsMounted(true);
   }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col justify-between h-full w-full pe-2 2xl:px-3">
@@ -135,18 +140,14 @@ export default function LeftSidebar() {
         ))}
       </div>
       <div className="flex justify-end">
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button
-              onClick={() => setIsCreateOpen(true)}
-              className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl mt-5"
-            >
-              <p className="hidden 2xl:block">Post</p>
-              <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
-            </Button>
-          </DialogTrigger>
-          <CreateStatusModal closeModal={() => setIsCreateOpen(false)} />
-        </Dialog>
+        <Button
+          onClick={() => setIsCreateOpen(true)}
+          className="rounded-full w-10 p-7 h-10 2xl:w-full 2xl:h-[3rem] font-bold text-xl mt-5"
+        >
+          <p className="hidden 2xl:block">Post</p>
+          <Icon icon="ph:key-return" className="block 2xl:hidden !size-9" />
+        </Button>
+        <CreateStatusModal open={isCreateOpen} setOpen={setIsCreateOpen} />
       </div>
     </div>
   );

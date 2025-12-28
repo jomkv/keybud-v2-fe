@@ -34,6 +34,9 @@ export interface StatusPayload extends Status {
     reposts: number;
     comments: number;
   };
+  isStarred: boolean;
+  isReposted: boolean;
+  isFollowing: boolean;
 }
 
 export interface StatusPayloadWithRelations {

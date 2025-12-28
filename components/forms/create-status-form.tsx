@@ -19,30 +19,34 @@ import { toast } from "sonner";
 import { useRef, useState } from "react";
 import AttachmentFormField from "@/components/form-fields/attachment-form-field";
 
-const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  attachments: z
-    .any()
-    .refine(
-      (files) => !files || (Array.isArray(files) && files.length <= 10),
-      "Maximum of 4 attachments."
-    ),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 interface CreateStatusFormProps {
   submitForm: (values: CreateStatus) => Promise<Status>;
   closeModal: () => void;
+  parentId?: number;
 }
 
 export default function CreateStatusForm({
   submitForm,
   closeModal,
+  parentId,
 }: CreateStatusFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachments, setAttachments] = useState<AttachmentInput[]>([]);
+
+  const formSchema = z.object({
+    title: parentId
+      ? z.string().optional()
+      : z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    attachments: z
+      .any()
+      .refine(
+        (files) => !files || (Array.isArray(files) && files.length <= 10),
+        "Maximum of 4 attachments."
+      ),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,17 +59,21 @@ export default function CreateStatusForm({
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const formValues = { ...form.getValues(), attachments };
+      const formValues = {
+        ...form.getValues(),
+        attachments,
+        parentId: parentId,
+      };
+
       await submitForm(formValues);
 
       closeModal();
-      toast.success("Post created");
+      toast.success(`${parentId ? "Comment" : "Post"} created`);
       form.reset();
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
     } catch (error) {
-      console.log(error);
       toast.warning("Something went wrong, please try again later");
     }
   };
@@ -77,33 +85,35 @@ export default function CreateStatusForm({
         className="w-full space-y-6"
         id="create-status-form"
       >
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Title"
-                  className={cn("w-full", {
-                    "border-destructive focus-visible:ring-0":
-                      form.formState.errors.title,
-                  })}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!parentId && (
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Title"
+                    className={cn("w-full", {
+                      "border-destructive focus-visible:ring-0":
+                        form.formState.errors.title,
+                    })}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{parentId ? "Reply" : "Description"}</FormLabel>
               <FormControl>
                 <RichTextInput
                   {...field}

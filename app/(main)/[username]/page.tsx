@@ -6,13 +6,13 @@ function Profile() {
   return (
     <>
       <ProfileTab />
+      {/* <StatusCard />
       <StatusCard />
       <StatusCard />
       <StatusCard />
       <StatusCard />
       <StatusCard />
-      <StatusCard />
-      <StatusCard />
+      <StatusCard /> */}
     </>
   );
 }

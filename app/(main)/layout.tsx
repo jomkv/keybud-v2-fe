@@ -3,7 +3,7 @@
 import LeftSidebar from "@/app/(main)/components/sidebars/left-sidebar";
 import RightSidebar from "@/app/(main)/components/sidebars/right-sidebar";
 import { useUser } from "@/hooks/use-user";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function MainLayout({
   children,
@@ -11,6 +11,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   const user = useUser();
+  const router = useRouter();
 
   // If the user is undefined (still hydrating from Redux), show spinner
   if (user === undefined) {
@@ -19,7 +20,7 @@ export default function MainLayout({
 
   // If no user exists after hydration, redirect to login
   if (!user) {
-    redirect("/login");
+    router.push("/login");
   }
 
   return (

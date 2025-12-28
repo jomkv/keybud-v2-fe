@@ -6,6 +6,13 @@ export interface User {
   switchType: string;
 }
 
+export interface UserPayload extends User {
+  _count: {
+    followers: number;
+    followings: number;
+  };
+}
+
 export interface UserState {
-  user: User | null;
+  user: UserPayload | null;
 }

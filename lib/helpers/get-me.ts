@@ -1,7 +1,7 @@
-import { User } from "@/@types/user";
+import { UserPayload } from "@/@types/user";
 import { cookies } from "next/headers";
 
-export async function getMe(): Promise<User | null> {
+export async function getMe(): Promise<UserPayload | null> {
   const cookieStore = await cookies();
   const allCookies = cookieStore.toString();
 

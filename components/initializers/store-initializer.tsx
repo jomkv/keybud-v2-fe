@@ -3,16 +3,16 @@
 import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slices/user-slice";
-import { User } from "@/@types/user";
+import { UserPayload } from "@/@types/user";
 
 interface StoreInitializerProps {
-  user: User | null;
+  user: UserPayload | null;
 }
 
 export default function StoreInitializer({ user }: StoreInitializerProps) {
   const dispatch = useDispatch();
   const initialized = useRef<boolean>(false);
-  const lastUserRef = useRef<User>(user);
+  const lastUserRef = useRef<UserPayload>(user);
 
   // Sync state if it's the first load OR if the user object changed
   if (!initialized.current || lastUserRef.current?.id !== user?.id) {

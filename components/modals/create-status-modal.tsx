@@ -8,58 +8,66 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import CreateStatusForm from "@/components/forms/create-status-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statusApi } from "@/lib/api/status.api";
-import { Status, StatusPayload } from "@/@types/status";
-import EditStatusForm from "../forms/edit-status-form";
+import { CreateStatus, Status, StatusPayload } from "@/@types/status";
+import StatusCard from "../cards/status-card";
 
-interface EditStatusModalProps {
+interface CreateStatusModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  status: StatusPayload;
+  parentStatus?: StatusPayload;
 }
 
-export default function EditStatusModal({
+export default function CreateStatusModal({
   open,
   setOpen,
-  status,
-}: EditStatusModalProps) {
+  parentStatus,
+}: CreateStatusModalProps) {
   const queryClient = useQueryClient();
 
-  const editStatus = useMutation({
-    mutationFn: statusApi.editStatus,
+  const createStatus = useMutation({
+    mutationFn: statusApi.createStatus,
     onSuccess: () => {
+      // Invalidate and refetch status queries
       queryClient.invalidateQueries({
         queryKey: ["statuses"],
       });
-      queryClient.invalidateQueries({
-        queryKey: ["status", status.id],
-      });
+
+      if (parentStatus) {
+        queryClient.invalidateQueries({
+          queryKey: ["status", parentStatus.id],
+        });
+      }
     },
   });
 
-  const submitForm = async (values: any): Promise<Status> => {
-    return await editStatus.mutateAsync(values);
+  const submitForm = async (values: CreateStatus): Promise<Status> => {
+    return await createStatus.mutateAsync(values);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-scroll">
         <DialogHeader>
-          <DialogTitle>Edit Post</DialogTitle>
+          <DialogTitle>
+            {parentStatus ? "Reply to Post" : "Create Post"}{" "}
+          </DialogTitle>
         </DialogHeader>
-        <EditStatusForm
-          status={status}
+        {parentStatus && <StatusCard isPreview={true} status={parentStatus} />}
+        <CreateStatusForm
           submitForm={submitForm}
           closeModal={() => setOpen(false)}
+          parentId={parentStatus?.id}
         />
         <DialogFooter>
           <Button
             type="submit"
-            form="edit-status-form"
-            disabled={editStatus.isPending}
+            form="create-status-form"
+            disabled={createStatus.isPending}
           >
-            Save
+            Submit
           </Button>
           <DialogClose asChild>
             <Button
