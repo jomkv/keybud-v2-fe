@@ -69,7 +69,7 @@ export default function LeftSidebar() {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { currentPage } = useAppSelector(
-    (state: RootState) => state.navigation
+    (state: RootState) => state.navigation,
   );
 
   const handleNavClick = (value: Page | null) => {
@@ -120,7 +120,7 @@ export default function LeftSidebar() {
         {LEFT_NAV_ITEMS.map((navItem, key) => (
           <Link
             className={`flex items-center p-3 2xl:p-5 2xl:ps-3 justify-start gap-5 h-14 w-auto hover:bg-neutral-500 rounded-full ${cn(
-              currentPage === navItem.value ? "font-bold" : ""
+              currentPage === navItem.value ? "font-bold" : "",
             )}`}
             href={navItem.url}
             key={key}

@@ -13,10 +13,10 @@ export const conversationApi = {
   async getConversation(
     conversationId: number,
     reset: boolean = false
-  ): Promise<Conversation> {
-    const res = await apiInstance.get<{ data: Conversation }>(
-      `/api/conversation/${conversationId}${reset ? "?reset=true" : ""}`
-    );
+  ): Promise<{ conversation: Conversation; messages: Message[] }> {
+    const res = await apiInstance.get<{
+      data: { conversation: Conversation; messages: Message[] };
+    }>(`/api/conversation/${conversationId}${reset ? "?reset=true" : ""}`);
 
     return res.data.data;
   },
@@ -33,7 +33,7 @@ export const conversationApi = {
 
   async createMessage(content: string, conversationId: number): Promise<void> {
     const res = await apiInstance.post<{ data: Message }>("/api/message", {
-      conversationId: conversationId,
+      conversationId: String(conversationId),
       content: content,
     });
 

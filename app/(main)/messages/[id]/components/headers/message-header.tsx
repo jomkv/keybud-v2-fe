@@ -5,7 +5,11 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-function MessageHeader() {
+interface MessageHeaderProps {
+  name: string;
+}
+
+function MessageHeader({ name }: MessageHeaderProps) {
   const router = useRouter();
 
   const handleClick = () => {
@@ -25,7 +29,7 @@ function MessageHeader() {
 
       <div className="flex items-center gap-1">
         <img src="/assets/user_icon.png" className="rounded-full w-8 h-8" />
-        <p className="font-semibold text-xl">@woozy</p>
+        <p className="font-semibold text-xl">{name}</p>
       </div>
     </div>
   );

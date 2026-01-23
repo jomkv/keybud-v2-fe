@@ -38,7 +38,9 @@ function ConversationCard({ conversation }: ConversationCardProps) {
             {conversation.name ||
               getRecipientUsername(conversation.members, user?.id as number)}
           </p>
-          <p className="font-light">{conversation.messages[0]?.content}</p>
+          <p className="font-light line-clamp-1">
+            {conversation.messages[0]?.content}
+          </p>
         </div>
       </div>
       <DropdownMenu>
