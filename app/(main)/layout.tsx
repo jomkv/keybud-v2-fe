@@ -5,6 +5,7 @@ import RightSidebar from "@/app/(main)/components/sidebars/right-sidebar";
 import { MessageSocketProvider } from "@/components/providers/message-socket-provider";
 import { useUser } from "@/hooks/use-user";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function MainLayout({
   children,
@@ -20,9 +21,11 @@ export default function MainLayout({
   }
 
   // If no user exists after hydration, redirect to login
-  if (!user) {
-    router.push("/login");
-  }
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+    }
+  }, [user, router]);
 
   return (
     <MessageSocketProvider>
