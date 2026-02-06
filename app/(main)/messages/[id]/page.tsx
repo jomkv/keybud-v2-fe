@@ -16,8 +16,9 @@ import {
   NewMessagePayload,
 } from "@jomkv/keybud-v2-contracts";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 function Message() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,14 +27,16 @@ function Message() {
 
   const { id } = useParams<{ id: string }>();
   const user = useUser();
+  const router = useRouter();
   const messagesRef = useRef<null | HTMLDivElement>(null);
   const messageSocket = useMessageSocket();
 
-  const { isLoading, isSuccess, data, refetch, isPlaceholderData } = useQuery({
-    queryKey: ["conversation", id],
-    queryFn: () => conversationApi.getConversation(Number(id), isInitialLoad),
-    placeholderData: keepPreviousData,
-  });
+  const { isLoading, isSuccess, data, refetch, isPlaceholderData, isError } =
+    useQuery({
+      queryKey: ["conversation", id],
+      queryFn: () => conversationApi.getConversation(Number(id), isInitialLoad),
+      placeholderData: keepPreviousData,
+    });
 
   const handleLoadMore = async () => {
     const res = await refetch();
@@ -69,6 +72,13 @@ function Message() {
     }
   }, [isSuccess, data, isInitialLoad]);
 
+  useEffect(() => {
+    if (isInitialLoad && isError) {
+      router.back();
+      toast.warning("Conversation not found");
+    }
+  }, [isInitialLoad, isError]);
+
   useLayoutEffect(() => {
     const el = messagesRef.current;
     if (!el) return;
@@ -94,44 +104,58 @@ function Message() {
     <>
       {/* Sticky Header */}
       {isSuccess && data && (
-        <MessageHeader
-          name={
-            data.conversation.name ||
-            getRecipientUsername(
-              data.conversation.members,
-              user?.id as number,
-            ) ||
-            ""
-          }
-        />
+        <>
+          <MessageHeader
+            name={
+              data.conversation.name ||
+              getRecipientUsername(
+                data.conversation.members,
+                user?.id as number,
+              ) ||
+              ""
+            }
+          />
+
+          {/* Messages */}
+          <div
+            ref={messagesRef}
+            className="flex-1 p-3 flex flex-col-reverse gap-2 min-h-0"
+          >
+            {messages.length == 0 && (
+              <p className="text-center font-semibold text-2xl m-5">
+                No messages with this user yet.
+              </p>
+            )}
+
+            {messages.map((message, index) => {
+              if (message.senderId === user?.id) {
+                return (
+                  <MessageBubbleOutgoing
+                    key={index}
+                    message={message.content}
+                  />
+                );
+              } else {
+                return (
+                  <MessageBubbleIncoming
+                    key={index}
+                    message={message.content}
+                  />
+                );
+              }
+            })}
+
+            {hasMore && (
+              <Button onClick={handleLoadMore} disabled={isLoading}>
+                load more BRUHH
+              </Button>
+            )}
+          </div>
+
+          {/* Sticky Bottom Form */}
+          <SendMessageForm conversationId={data.conversation.id} />
+        </>
       )}
-
-      {/* Messages */}
-      <div
-        ref={messagesRef}
-        className="flex-1 p-3 flex flex-col-reverse gap-2 min-h-0"
-      >
-        {messages.map((message, index) => {
-          if (message.senderId === user?.id) {
-            return (
-              <MessageBubbleOutgoing key={index} message={message.content} />
-            );
-          } else {
-            return (
-              <MessageBubbleIncoming key={index} message={message.content} />
-            );
-          }
-        })}
-
-        {hasMore && (
-          <Button onClick={handleLoadMore} disabled={isLoading}>
-            load more BRUHH
-          </Button>
-        )}
-      </div>
-
-      {/* Sticky Bottom Form */}
-      {data && <SendMessageForm conversationId={data.conversation.id} />}
     </>
   );
 }
