@@ -13,8 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { authSocket } from "@/app/socket";
+import { AUTH_EVENT_NAMES } from "@jomkv/keybud-v2-contracts";
 
 export function LoginForm({
   className,
@@ -28,20 +28,22 @@ export function LoginForm({
 
     authSocket.connect();
 
+    // Event handlers
+    const handleConnect = () => {
+      authSocket.emit(AUTH_EVENT_NAMES.SUBSCRIBE, { sessionId: id });
+    };
+
     const handleAuthComplete = () => {
       window.location.href = "/?refresh=true";
       authSocket.disconnect();
     };
 
-    authSocket.on("connect", () => {
-      authSocket.emit("auth:subscribe", { sessionId: id });
-    });
+    authSocket.on("connect", handleConnect);
+    authSocket.on(AUTH_EVENT_NAMES.COMPLETE, handleAuthComplete);
 
-    authSocket.on("auth:complete", handleAuthComplete);
-
-    // 4.Remove specific listener and disconnect
     return () => {
-      authSocket.off("auth:complete", handleAuthComplete);
+      authSocket.off("connect", handleConnect);
+      authSocket.off(AUTH_EVENT_NAMES.COMPLETE, handleAuthComplete);
       authSocket.disconnect();
     };
   }, []);
