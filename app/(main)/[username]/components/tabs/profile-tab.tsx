@@ -1,7 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UserProfileTab } from "@/@types/user";
 
 const TABS: {
-  value: string;
+  value: UserProfileTab;
   label: string;
 }[] = [
   {
@@ -22,9 +23,18 @@ const TABS: {
   },
 ];
 
-function ProfileTab() {
+interface ProfileTabProps {
+  tab: UserProfileTab;
+  setTab: (tab: UserProfileTab) => void;
+}
+
+function ProfileTab({ tab, setTab }: ProfileTabProps) {
+  const handleTabChange = (value: string) => {
+    setTab(value as UserProfileTab);
+  };
+
   return (
-    <Tabs defaultValue={TABS[0].value}>
+    <Tabs value={tab} onValueChange={handleTabChange}>
       <TabsList className="w-full justify-evenly bg-black">
         {TABS.map((tab, key) => (
           <TabsTrigger

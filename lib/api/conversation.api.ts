@@ -4,7 +4,7 @@ import { apiInstance } from "./api";
 export const conversationApi = {
   async getAllConversations(): Promise<Conversation[]> {
     const res = await apiInstance.get<{ data: Conversation[] }>(
-      "/api/conversation"
+      "/api/conversation",
     );
 
     return res.data.data;
@@ -12,7 +12,7 @@ export const conversationApi = {
 
   async getConversation(
     conversationId: number,
-    reset: boolean = false
+    reset: boolean = false,
   ): Promise<{ conversation: Conversation; messages: Message[] }> {
     const res = await apiInstance.get<{
       data: { conversation: Conversation; messages: Message[] };
@@ -21,14 +21,14 @@ export const conversationApi = {
     return res.data.data;
   },
 
-  async createConversation(members: number[]): Promise<void> {
+  async createConversation(members: number[]) {
     const res = await apiInstance.post<{
       data: Omit<Conversation, "members" | "messages">;
     }>("/api/conversation", {
       memberIds: members,
     });
 
-    return;
+    return res.data.data;
   },
 
   async createMessage(content: string, conversationId: number): Promise<void> {

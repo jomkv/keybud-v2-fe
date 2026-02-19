@@ -11,8 +11,20 @@ import { setPage } from "@/store/slices/navigationSlice";
 import { RootState } from "@/store/store";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/hooks/use-user";
 
-const LEFT_NAV_ITEMS: {
+export default function LeftSidebar() {
+  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  const user = useUser()
+  const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const { currentPage } = useAppSelector(
+    (state: RootState) => state.navigation,
+  );
+
+  const LEFT_NAV_ITEMS: {
   icon: string;
   url: string;
   title: string;
@@ -44,7 +56,7 @@ const LEFT_NAV_ITEMS: {
   },
   {
     title: "Profile",
-    url: "/johndoe",
+    url: `/${user?.username}`,
     icon: "ph:user",
     value: "profile",
   },
@@ -61,16 +73,6 @@ const LEFT_NAV_ITEMS: {
     value: null,
   },
 ];
-
-export default function LeftSidebar() {
-  const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-
-  const pathname = usePathname();
-  const dispatch = useAppDispatch();
-  const { currentPage } = useAppSelector(
-    (state: RootState) => state.navigation,
-  );
 
   const handleNavClick = (value: Page | null) => {
     if (value === null) return;

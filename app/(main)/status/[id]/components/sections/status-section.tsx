@@ -1,50 +1,26 @@
 import { StatusAttachments } from "@/components/cards/status-card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Repeat2, Star, Share } from "lucide-react";
+import { Share } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import CommentForm from "@/app/(main)/status/[id]/components/forms/comment-form";
 import { StatusPayload } from "@/@types/status";
 import { formatDetailedDate } from "@/lib/utils";
 import StatusSettingsButton from "@/components/buttons/status-settings-button";
-import { useUser } from "@/hooks/use-user";
 import FollowUserButton from "../buttons/follow-user-button";
 import StarButton from "@/components/buttons/star-button";
 import RepostButton from "@/components/buttons/repost-button";
 import CommentButton from "@/components/buttons/comment-button";
+import StatusHeader from "../headers/status-header";
 
 interface StatusSectionProps {
   status: StatusPayload;
 }
 
 function StatusSection({ status }: StatusSectionProps) {
-  const user = useUser();
-
   return (
     <div className="flex flex-col p-4 gap-2">
       {/* Header  */}
-      <div className="flex justify-between  items-center">
-        <div className="flex gap-2 items-center">
-          <img
-            src="/assets/user_icon.png"
-            className="rounded-full w-12 h-12 mt-3"
-          />
-          <Link href={`/${status.user.username}`}>
-            <p className="font-semibold text-lg hover:underline">
-              @{status.user.username}
-            </p>
-          </Link>
-        </div>
-
-        <div>
-          <FollowUserButton
-            userId={status.userId}
-            isFollowing={status.isFollowing}
-          />
-
-          <StatusSettingsButton status={status} />
-        </div>
-      </div>
+      <StatusHeader status={status} />
 
       {/* Title */}
       <p className="text-xl font-bold">{status.title}</p>

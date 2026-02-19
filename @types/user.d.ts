@@ -16,3 +16,5 @@ export interface UserPayload extends User {
 export interface UserState {
   user: UserPayload | null;
 }
+
+export type UserProfileTab = "posts" | "comments" | "media" | "stars";
