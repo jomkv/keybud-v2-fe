@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Settings } from "lucide-react";
+import { Search, Settings, SquarePen } from "lucide-react";
 import React, { useState } from "react";
 import ConversationCard from "@/app/(main)/messages/components/cards/conversation-card";
 import {
@@ -11,12 +11,25 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { conversationApi } from "@/lib/api/conversation.api";
 import Loader from "@/components/defaults/loader";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import NewMessageModal from "./components/modals/new-message-modal";
+import { useUser } from "@/hooks/use-user";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function Messages() {
   const [enableNotifs, setEnableNotifs] = useState<boolean>(true);
+  const [showNewMessage, setShowNewMessage] = useState<boolean>(false);
+
+  const user = useUser();
+  const router = useRouter();
 
   const {
     isLoading,
@@ -27,6 +40,51 @@ function Messages() {
     queryFn: conversationApi.getAllConversations,
   });
 
+  const createConversation = useMutation({
+    mutationFn: (memberIds: number[]) =>
+      conversationApi.createConversation(memberIds),
+  });
+
+  const getExistingConversationId = (memberIds: number[]): number | null => {
+    if (!conversations || conversations?.length == 0) return null;
+
+    const idsSet = new Set(memberIds);
+
+    // Check if member IDs are a complete match
+    for (const conversation of conversations) {
+      if (memberIds.length !== conversation.members.length) continue;
+
+      const convoSet = new Set(conversation.members.map((m) => m.id));
+
+      if ([...idsSet].every((id) => convoSet.has(id))) {
+        return conversation.id;
+      }
+    }
+
+    return null;
+  };
+
+  const createNewConversation = async (memberIds: number[]): Promise<void> => {
+    if (!conversations) return;
+
+    memberIds = [...memberIds, user?.id as number];
+
+    const existingConversationId = getExistingConversationId(memberIds);
+
+    if (existingConversationId) {
+      router.push(`/messages/${existingConversationId}`);
+      return;
+    }
+
+    try {
+      const newConvo = await createConversation.mutateAsync(memberIds);
+
+      router.push(`/messages/${newConvo.id}`);
+    } catch (error) {
+      toast.warning("Something went wrong, please try again later");
+    }
+  };
+
   if (isLoading) return <Loader size={50} />;
 
   return (
@@ -35,21 +93,36 @@ function Messages() {
       <div className="flex justify-between items-end p-3">
         <p className="font-semibold text-3xl">Messages</p>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="ghost">
-              <Settings style={{ width: "90%", height: "90%" }} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuCheckboxItem
-              checked={enableNotifs}
-              onCheckedChange={setEnableNotifs}
-            >
-              Receive Email Notifications
-            </DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-center gap-1">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setShowNewMessage(true)}
+              >
+                <SquarePen style={{ width: "80%", height: "80%" }} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>New message</TooltipContent>
+          </Tooltip>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost">
+                <Settings style={{ width: "80%", height: "80%" }} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuCheckboxItem
+                checked={enableNotifs}
+                onCheckedChange={setEnableNotifs}
+              >
+                Receive Email Notifications
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -73,6 +146,12 @@ function Messages() {
           </>
         )}
       </div>
+
+      <NewMessageModal
+        open={showNewMessage}
+        setOpen={setShowNewMessage}
+        handleCreate={createNewConversation}
+      />
     </>
   );
 }
