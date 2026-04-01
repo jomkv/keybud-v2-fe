@@ -6,7 +6,7 @@ import MessageBubbleOutgoing from "@/app/(main)/messages/[id]/components/bubbles
 import SendMessageForm from "@/app/(main)/messages/[id]/components/forms/send-message-form";
 import MessageHeader from "@/app/(main)/messages/[id]/components/headers/message-header";
 import Loader from "@/components/defaults/loader";
-import { useMessageSocket } from "@/components/providers/message-socket-provider";
+import { useMessageSocket } from "@/components/providers/socket-provider";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/use-user";
 import { conversationApi } from "@/lib/api/conversation.api";
@@ -94,7 +94,6 @@ function Message() {
 
     return () => {
       messageSocket.off(MESSAGE_EVENT_NAMES.NEW_MESSAGE, handleNewMessage);
-      messageSocket.disconnect();
     };
   }, []);
 

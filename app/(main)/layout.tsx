@@ -2,7 +2,7 @@
 
 import LeftSidebar from "@/app/(main)/components/sidebars/left-sidebar";
 import RightSidebar from "@/app/(main)/components/sidebars/right-sidebar";
-import { MessageSocketProvider } from "@/components/providers/message-socket-provider";
+import { SocketProvider } from "@/components/providers/socket-provider";
 import { useUser } from "@/hooks/use-user";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -28,7 +28,7 @@ export default function MainLayout({
   }, [user, router]);
 
   return (
-    <MessageSocketProvider>
+    <SocketProvider>
       <div className="flex justify-center min-h-screen relative">
         <div className="min-w-[5rem] max-w-[20rem] w-[calc(25vw-10rem)] sticky top-0 h-screen py-5 flex-shrink-0 overflow-y-auto">
           <LeftSidebar />
@@ -40,6 +40,6 @@ export default function MainLayout({
           <RightSidebar />
         </div>
       </div>
-    </MessageSocketProvider>
+    </SocketProvider>
   );
 }
