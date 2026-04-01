@@ -54,7 +54,7 @@ function Messages() {
     for (const conversation of conversations) {
       if (memberIds.length !== conversation.members.length) continue;
 
-      const convoSet = new Set(conversation.members.map((m) => m.id));
+      const convoSet = new Set(conversation.members.map((m) => m.userId));
 
       if ([...idsSet].every((id) => convoSet.has(id))) {
         return conversation.id;
