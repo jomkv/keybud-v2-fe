@@ -17,7 +17,7 @@ function StatusHeader({ status }: StatusHeaderProps) {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/");
+    router.back();
   };
 
   return (
