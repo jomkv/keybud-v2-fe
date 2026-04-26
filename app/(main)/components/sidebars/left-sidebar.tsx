@@ -12,67 +12,69 @@ import { RootState } from "@/store/store";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/hooks/use-user";
+import { clearUnread } from "@/store/slices/notification-slice";
 
 export default function LeftSidebar() {
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  const user = useUser()
+  const user = useUser();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { currentPage } = useAppSelector(
     (state: RootState) => state.navigation,
   );
+  const unreadCount = useAppSelector((s) => s.notification.unreadCount);
 
   const LEFT_NAV_ITEMS: {
-  icon: string;
-  url: string;
-  title: string;
-  value: Page | null;
-}[] = [
-  {
-    title: "Home",
-    url: "/",
-    icon: "ph:house",
-    value: "home",
-  },
-  {
-    title: "Messages",
-    url: "/messages",
-    icon: "ph:envelope-simple",
-    value: "messages",
-  },
-  {
-    title: "Notifications",
-    url: "/notifications",
-    icon: "ph:bell-simple",
-    value: "notifications",
-  },
-  {
-    title: "Search",
-    url: "/search",
-    icon: "ph:magnifying-glass",
-    value: "search",
-  },
-  {
-    title: "Profile",
-    url: `/${user?.username}`,
-    icon: "ph:user",
-    value: "profile",
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: "ph:gear",
-    value: "settings",
-  },
-  {
-    title: "Logout",
-    url: "#",
-    icon: "ph:arrow-line-right",
-    value: null,
-  },
-];
+    icon: string;
+    url: string;
+    title: string;
+    value: Page | null;
+  }[] = [
+    {
+      title: "Home",
+      url: "/",
+      icon: "ph:house",
+      value: "home",
+    },
+    {
+      title: "Messages",
+      url: "/messages",
+      icon: "ph:envelope-simple",
+      value: "messages",
+    },
+    {
+      title: "Notifications",
+      url: "/notifications",
+      icon: "ph:bell-simple",
+      value: "notifications",
+    },
+    {
+      title: "Search",
+      url: "/search",
+      icon: "ph:magnifying-glass",
+      value: "search",
+    },
+    {
+      title: "Profile",
+      url: `/${user?.username}`,
+      icon: "ph:user",
+      value: "profile",
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: "ph:gear",
+      value: "settings",
+    },
+    {
+      title: "Logout",
+      url: "#",
+      icon: "ph:arrow-line-right",
+      value: null,
+    },
+  ];
 
   const handleNavClick = (value: Page | null) => {
     if (value === null) return;
@@ -126,17 +128,26 @@ export default function LeftSidebar() {
             )}`}
             href={navItem.url}
             key={key}
-            onClick={() => handleNavClick(navItem.value)}
+            onClick={() => {
+              handleNavClick(navItem.value);
+              if (navItem.value === "notifications") dispatch(clearUnread());
+            }}
           >
-            <Icon
-              key={key}
-              className="text-3xl"
-              icon={
-                currentPage === navItem.value
-                  ? `${navItem.icon}-fill`
-                  : navItem.icon
-              }
-            />
+            <div className="relative">
+              <Icon
+                className="text-3xl"
+                icon={
+                  currentPage === navItem.value
+                    ? `${navItem.icon}-fill`
+                    : navItem.icon
+                }
+              />
+              {navItem.value === "notifications" && unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#8c53fe] text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-0.5">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </div>
             <span className="hidden 2xl:block text-xl">{navItem.title}</span>
           </Link>
         ))}

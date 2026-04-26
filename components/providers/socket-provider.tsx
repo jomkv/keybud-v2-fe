@@ -2,10 +2,17 @@
 import { createContext, useContext, useEffect, useRef } from "react";
 import { messageSocket, notificationSocket } from "@/app/socket";
 import {
+  DeleteNotificationPayload,
   MESSAGE_EVENT_NAMES,
+  NewNotificationPayload,
   NOTIFICATION_EVENT_NAMES,
 } from "@jomkv/keybud-v2-contracts";
 import { useUser } from "@/hooks/use-user";
+import { useAppDispatch } from "@/store/hooks";
+import {
+  addNotification,
+  removeNotification,
+} from "@/store/slices/notification-slice";
 
 type SocketCtx = {
   messageSocket: typeof messageSocket;
@@ -15,49 +22,66 @@ const SocketContext = createContext<SocketCtx | null>(null);
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   const user = useUser();
-  const messageSocketConnected = useRef(false);
-  const notificationSocketConnected = useRef(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     console.log("DEBUG:", user?.id);
   }, [user?.id]);
 
   useEffect(() => {
-    if (
-      !user?.id ||
-      (messageSocketConnected.current && notificationSocketConnected.current)
-    )
-      return;
+    const handleNew = (data: NewNotificationPayload) => {
+      dispatch(addNotification(data));
+    };
+    const handleDelete = (data: DeleteNotificationPayload) => {
+      dispatch(removeNotification(data.notificationId));
+    };
+
+    notificationSocket.on(NOTIFICATION_EVENT_NAMES.NEW_NOTIFICATION, handleNew);
+    notificationSocket.on(
+      NOTIFICATION_EVENT_NAMES.DELETE_NOTIFACTION,
+      handleDelete,
+    );
+
+    return () => {
+      notificationSocket.off(
+        NOTIFICATION_EVENT_NAMES.NEW_NOTIFICATION,
+        handleNew,
+      );
+      notificationSocket.off(
+        NOTIFICATION_EVENT_NAMES.DELETE_NOTIFACTION,
+        handleDelete,
+      );
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!user?.id) return;
 
     const messageHandleConnect = () => {
-      messageSocketConnected.current = true;
       messageSocket.emit(MESSAGE_EVENT_NAMES.SUBSCRIBE, { userId: user.id });
     };
 
     const notificationHandleConnect = () => {
-      notificationSocketConnected.current = true;
       notificationSocket.emit(NOTIFICATION_EVENT_NAMES.SUBSCRIBE, {
         userId: user.id,
       });
     };
 
-    if (!messageSocketConnected.current) {
-      messageSocket.connect();
-    }
-
-    if (!notificationSocketConnected.current) {
-      notificationSocket.connect();
-    }
+    messageSocket.connect();
+    notificationSocket.connect();
 
     notificationSocket.on("connect", notificationHandleConnect);
     messageSocket.on("connect", messageHandleConnect);
+
+    // If already connected at mount time, subscribe immediately
+    if (messageSocket.connected) messageHandleConnect();
+    if (notificationSocket.connected) notificationHandleConnect();
+
     return () => {
-      console.log("DEBUG2:", "disconnected");
       messageSocket.off("connect", messageHandleConnect);
       messageSocket.disconnect();
       notificationSocket.off("connect", notificationHandleConnect);
       notificationSocket.disconnect();
-      messageSocketConnected.current = false;
     };
   }, [user?.id]);
 

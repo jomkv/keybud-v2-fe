@@ -1,72 +1,47 @@
 "use client";
 
 import NotificationCard from "@/app/(main)/notifications/components/cards/notification-card";
-import { useNotificationSocket } from "@/components/providers/socket-provider";
 import { notificationnApi } from "@/lib/api/notification.api";
+import { groupNotifications } from "@/lib/helpers/notification-helper";
 import {
-  DeleteNotificationPayload,
-  NewNotificationPayload,
-  NOTIFICATION_EVENT_NAMES,
-} from "@jomkv/keybud-v2-contracts";
+  setNotifications,
+  clearUnread,
+} from "@/store/slices/notification-slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
+import Loader from "@/components/defaults/loader";
 
 function Notifications() {
-  const notificationSocket = useNotificationSocket();
+  const dispatch = useAppDispatch();
+  const notifications = useAppSelector((s) => s.notification.notifications);
 
-  const {
-    isLoading,
-    isSuccess,
-    isError,
-    data: notifications,
-  } = useQuery({
+  const { isLoading, isSuccess, data } = useQuery({
     queryKey: ["notifications"],
     queryFn: notificationnApi.getAllNotifications,
   });
 
   useEffect(() => {
-    const handleNewNotification = (data: NewNotificationPayload) => {
-      console.log(data);
-    };
+    if (isSuccess && data) {
+      dispatch(setNotifications(data));
+      dispatch(clearUnread());
+    }
+  }, [isSuccess, data, dispatch]);
 
-    const handleDeleteNotification = (data: DeleteNotificationPayload) => {
-      console.log(data);
-    };
+  if (isLoading) return <Loader size={50} />;
 
-    notificationSocket.on(
-      NOTIFICATION_EVENT_NAMES.NEW_NOTIFICATION,
-      handleNewNotification,
-    );
-
-    notificationSocket.on(
-      NOTIFICATION_EVENT_NAMES.DELETE_NOTIFACTION,
-      handleDeleteNotification,
-    );
-
-    return () => {
-      notificationSocket.off(
-        NOTIFICATION_EVENT_NAMES.NEW_NOTIFICATION,
-        handleNewNotification,
-      );
-
-      notificationSocket.off(
-        NOTIFICATION_EVENT_NAMES.DELETE_NOTIFACTION,
-        handleDeleteNotification,
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log(notifications);
-  }, [notifications]);
+  const grouped = groupNotifications(notifications);
 
   return (
     <>
-      {isSuccess &&
-        notifications &&
-        notifications.map((notif, idx) => (
-          <NotificationCard payload={notif} key={idx} />
-        ))}
+      {grouped.map((group, idx) => (
+        <NotificationCard key={idx} group={group} />
+      ))}
+      {grouped.length === 0 && (
+        <p className="text-center text-neutral-400 mt-16">
+          No notifications yet.
+        </p>
+      )}
     </>
   );
 }
